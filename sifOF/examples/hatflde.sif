@@ -1,0 +1,191 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          HATFLDE
+
+*   Problem :
+*   *********
+
+*   An exponential fitting  test problem from the OPTIMA user manual.
+
+*   Source:
+*   "The OPTIMA user manual (issue No.8, p. 37)",
+*   Numerical Optimization Centre, Hatfield Polytechnic (UK), 1989.
+
+*   SIF input: Ph. Toint, May 1990.
+
+*   classification SUR2-AN-3-0
+
+*   Problem data
+
+ IE NG                  21
+
+ RE T1                  0.3
+ RE T2                  0.35
+ RE T3                  0.4
+ RE T4                  0.45
+ RE T5                  0.5
+ RE T6                  0.55
+ RE T7                  0.6
+ RE T8                  0.65
+ RE T9                  0.7
+ RE T10                 0.75
+ RE T11                 0.8
+ RE T12                 0.85
+ RE T13                 0.9
+ RE T14                 0.95
+ RE T15                 1.0
+ RE T16                 1.05
+ RE T17                 1.1
+ RE T18                 1.15
+ RE T19                 1.2
+ RE T20                 1.25
+ RE T21                 1.3
+
+ RE Z1                  1.561
+ RE Z2                  1.473
+ RE Z3                  1.391
+ RE Z4                  1.313
+ RE Z5                  1.239
+ RE Z6                  1.169
+ RE Z7                  1.103
+ RE Z8                  1.04
+ RE Z9                  0.981
+ RE Z10                 0.925
+ RE Z11                 0.8721
+ RE Z12                 0.8221
+ RE Z13                 0.7748
+ RE Z14                 0.73
+ RE Z15                 0.6877
+ RE Z16                 0.6477
+ RE Z17                 0.6099
+ RE Z18                 0.5741
+ RE Z19                 0.5403
+ RE Z20                 0.5084
+ RE Z21                 0.4782
+
+*   Constants
+
+ IE 1                   1
+
+VARIABLES
+
+    X1
+    X2
+    X3
+
+GROUPS
+
+ DO I         1                        NG
+ XN G(I)
+ ND
+
+CONSTANTS
+
+ DO I         1                        NG
+ AM -ZI       Z(I)      -1.0
+ Z  HATFLDE   G(I)                     -ZI
+ ND
+
+BOUNDS
+
+ FR HATFLDE   'DEFAULT'
+
+START POINT
+
+    HATFLDE   X1        1.0
+    HATFLDE   X2        -1.0
+    HATFLDE   X3        0.0
+
+ELEMENT TYPE
+
+ EV XPEXP     X                        Y
+ EP XPEXP     T
+
+ EV PEXP      X
+ EP PEXP      T
+
+ELEMENT USES
+
+ DO I         1                        NG
+
+ XT A(I)      XPEXP
+ ZV A(I)      X                        X1
+ ZV A(I)      Y                        X2
+ ZP A(I)      T                        T(I)
+
+ XT B(I)      PEXP
+ ZV B(I)      X                        X3
+ ZP B(I)      T                        T(I)
+
+ ND
+
+GROUP TYPE
+
+ GV L2        GVAR
+
+GROUP USES
+
+ XT 'DEFAULT' L2
+
+ DO I         1                        NG
+ XE G(I)      A(I)      -1.0           B(I)
+ ND
+
+OBJECT BOUND
+
+ LO HATFLDE             0.0
+
+*   Solution
+
+*LO SOLTN               5.120377D-07
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      HATFLDE
+
+TEMPORARIES
+
+ R  EX
+ M  EXP
+
+INDIVIDUALS
+
+ T  PEXP
+ A  EX                  EXP( T * X )
+ F                      EX
+ G  X                   T * EX
+ H  X         X         T * T * EX
+
+ T  XPEXP
+ A  EX                  EXP( T * Y )
+ F                      X * EX
+ G  X                   EX
+ G  Y                   T * X * EX
+ H  X         Y         T * EX
+ H  Y         Y         T * T * X * EX
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        HATFLDE
+
+INDIVIDUALS
+
+ T  L2
+
+ F                      GVAR * GVAR
+ G                      GVAR + GVAR
+ H                      2.0
+
+ENDATA

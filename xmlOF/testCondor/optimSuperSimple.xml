@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="ISO-8859-1"?> 
+<configCONDOR> 
+    <!--  name of all design variables (tab separated) -->
+    <varNames>
+        x_0 x_1
+    </varNames>
+
+    <objectiveFunction>
+        <aggregationFunction>
+
+	      (x_0-2)^2+(x_1-5)^2
+
+        </aggregationFunction> 
+    </objectiveFunction>
+
+    <!-- a priori estimated x (starting point) -->
+    <startingPoint>
+         0  0   
+    </startingPoint>
+      
+    <constraints>
+        <!-- lower bounds for x -->
+        <lowerBounds>
+             -2 -3 
+        </lowerBounds>
+
+        <!-- upper bounds for x -->
+        <upperBounds>        
+             3  3
+        </upperBounds>
+
+        <!-- Here would be the matrix for linear inequalities definition if they were needed 
+        x is feasible <=> Ax >= b -->
+        <linearInequalities>
+            <eq>
+             <!-- a_11   a_12   b_1 -->
+                    -1     -1    -4
+            </eq>
+	    <!-- 
+            <eq>
+                    -2     -3    -5
+            </eq> -->
+        </linearInequalities>
+
+    </constraints>
+
+    <!-- scaling factor for the normalization of the variables (optional) -->
+    <scalingFactor auto="1" />
+
+    <optimizationParameters
+        rhostart    =" 1    "
+        rhoend      =" 1e-2 "
+        timeToSleep =" .1   "
+        maxIteration=" 1000 "
+    />
+
+    <!-- all the datafile are optional 
+    traceFile: the data of the last run are inside a file called (WARNING!! BINARY FORMAT!) -->
+    <dataFiles
+        traceFile="traceSuperSimple.dat"
+    />
+
+    <!-- name of the save file containing the end result of the optimization process -->
+    <resultFile>
+        resultsSuperSimple.txt
+    </resultFile>
+
+    <!-- the sigma vector is used to compute sensibilities of the Obj.Funct. relative 
+to variation of amplitude sigma_i on axis i -->
+    <sigmaVector>
+        1 1
+    </sigmaVector>
+
+</configCONDOR>

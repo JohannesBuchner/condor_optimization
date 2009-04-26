@@ -1,0 +1,4 @@
+condor optimRosen3.xml
+matconvert traceRosen3.dat
+emacs traceRosen3.dat.txt &
+emacs resultsRosen3.txt &

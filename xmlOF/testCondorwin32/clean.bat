@@ -1,0 +1,3 @@
+del *.dat
+del *.txt
+

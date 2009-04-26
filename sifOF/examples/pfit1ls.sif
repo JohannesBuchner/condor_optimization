@@ -1,0 +1,276 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          PFIT1LS
+
+*   Problem :
+*   *********
+
+*   The problem is to fit a model containing a pole, given data
+*   for values, first and second derivatives at two distinct points.
+*   This is a least-squares version of problem PFIT1.
+
+*   The problem is not convex.
+
+*   SIF input: Ph. Toint, March 1994.
+*              Lower bound on H added, Nov 2002.
+
+*   classification  SUR2-AN-3-0
+
+*   Problem data
+
+ RE CF                  -8.0            
+ RE CG                  -18.6666666666
+ RE CH                  -23.1111111111
+
+VARIABLES
+
+    A
+    R
+    H
+
+GROUPS
+
+ N  EF
+ N  EG
+ N  EH
+
+CONSTANTS
+
+ Z  PFIT1LS   EF                       CF
+ Z  PFIT1LS   EG                       CG
+ Z  PFIT1LS   EH                       CH
+
+BOUNDS
+
+ FR PFIT1LS   'DEFAULT'
+ LO PFIT1LS   H         -0.5
+
+START POINT
+
+ V  PFIT1LS   A         1.0
+ V  PFIT1LS   R         0.0
+ V  PFIT1LS   H         1.0
+
+ELEMENT TYPE
+
+ EV T1        AA                       RR
+ EV T1        XX
+
+ EV T2        AA                       RR
+ EV T2        XX
+
+ EV T3        AA                       RR
+ EV T3        XX
+
+ EV T4        AA                       RR
+ EV T4        XX
+
+ EV T5        AA                       RR
+ EV T5        XX
+
+ELEMENT USES
+
+ T  EA        T3
+ V  EA        AA                       A
+ V  EA        RR                       R
+ V  EA        XX                       H
+
+ T  EB        T2
+ V  EB        AA                       A
+ V  EB        RR                       R
+ V  EB        XX                       H
+
+ T  EC        T1
+ V  EC        AA                       A
+ V  EC        RR                       R
+ V  EC        XX                       H
+
+ T  ED        T4
+ V  ED        AA                       A
+ V  ED        RR                       R
+ V  ED        XX                       H
+
+ T  EE        T5
+ V  EE        AA                       A
+ V  EE        RR                       R
+ V  EE        XX                       H
+
+GROUP TYPE
+
+ GV L2        GVAR
+
+GROUP USES
+
+ T  'DEFAULT' L2
+
+ E  EF        EA        -0.5           EC        1.0
+ E  EF        ED        -1.0
+
+ E  EG        EA        -1.0           EB
+
+ E  EH        EE        -1.0
+
+OBJECT BOUND
+
+ LO PFIT1LS             0.0
+
+*   Solution at ( 1.0, 3.0 , 2.0 )
+
+*LO SOLTN               0.0
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      PFIT1LS
+
+TEMPORARIES
+
+ R  Y
+ R  ARX
+ R  LOGY
+ R  A1
+ R  B
+ R  BA
+ R  BX
+ R  BAA
+ R  BAX
+ R  BXX
+ R  C
+ R  CC
+ R  CCC
+ R  D
+ R  DA
+ R  DR
+ R  DX
+ R  DAA
+ R  DAR
+ R  DAX
+ R  DRX
+ R  DXX
+
+ M  LOG
+
+INDIVIDUALS
+
+ T  T1
+ F                      AA * RR * XX
+ G  AA                  RR * XX
+ G  RR                  AA * XX
+ G  XX                  AA * RR
+ H  AA        RR        XX
+ H  AA        XX        RR
+ H  RR        XX        AA
+
+ T  T2
+ A  A1                  AA + 1.0
+ A  Y                   1.0 + XX
+ A  LOGY                LOG( Y )
+ A  C                   Y ** ( - A1 )
+ A  CC                  C / Y
+ A  CCC                 CC / Y
+ A  B                   1.0 - C
+ A  BA                  LOGY * C
+ A  BX                  A1 * CC
+ A  BAA                 - LOGY * LOGY * C
+ A  BAX                 - LOGY * BX + CC
+ A  BXX                 - A1 * ( A1 + 1.0 ) * CCC
+ A  ARX                 AA * RR * XX
+ F                      ARX * B
+ G  AA                  RR * XX * B + ARX * BA
+ G  RR                  AA * XX * B
+ G  XX                  AA * RR * B + ARX * BX
+ H  AA        AA        2.0 * RR * XX * BA + ARX * BAA
+ H  AA        RR        XX * B + AA * XX * BA
+ H  AA        XX        RR * B + RR * XX * BX + AA * RR * BA
+ H+                      + ARX * BAX
+ H  RR        XX        AA * B + AA * XX * BX
+ H  XX        XX        2.0 * AA * RR * BX + ARX * BXX
+
+ T  T3
+ F                      AA * ( AA + 1.0 ) * RR * XX * XX
+ G  AA                  ( 2.0 *  AA + 1.0 ) * RR * XX * XX
+ G  RR                  AA * ( AA + 1.0 ) * XX * XX
+ G  XX                  2.0 * AA * ( AA + 1.0 ) * RR * XX
+ H  AA        AA        2.0 * RR * XX * XX
+ H  AA        RR        ( 2.0 *  AA + 1.0 ) * XX * XX
+ H  AA        XX        2.0 * ( 2.0 *  AA + 1.0 ) * RR * XX
+ H  RR        XX        2.0 * AA * ( AA + 1.0 ) * XX
+ H  XX        XX        2.0 * AA * ( AA + 1.0 ) * RR
+
+ T  T4
+ A  Y                   1.0 + XX
+ A  LOGY                LOG( Y )
+ A  C                   Y ** ( - AA )
+ A  CC                  C / Y
+ A  CCC                 CC / Y
+ A  B                   1.0 - C
+ A  BA                  LOGY * C
+ A  BX                  AA * CC
+ A  BAA                 - LOGY * LOGY * C
+ A  BAX                 - LOGY * BX + CC
+ A  BXX                 - AA * ( AA + 1.0 ) * CCC
+ F                      RR * B
+ G  AA                  RR * BA
+ G  RR                  B
+ G  XX                  RR * BX
+ H  AA        AA        RR * BAA
+ H  AA        RR        BA
+ H  AA        XX        RR * BAX
+ H  RR        XX        BX
+ H  XX        XX        RR * BXX
+
+ T  T5
+ A  A1                  AA + 2.0
+ A  Y                   1.0 + XX
+ A  LOGY                LOG( Y )
+ A  C                   Y ** ( - A1 )
+ A  CC                  C / Y
+ A  CCC                 CC / Y
+ A  B                   1.0 - C
+ A  BA                  LOGY * C
+ A  BX                  A1 * CC
+ A  BAA                 - LOGY * LOGY * C
+ A  BAX                 - LOGY * BX + CC
+ A  BXX                 - A1 * ( A1 + 1.0 ) * CCC
+ A  D                   AA * ( AA + 1.0 ) * RR * XX * XX
+ A  DA                  ( 2.0 *  AA + 1.0 ) * RR * XX * XX
+ A  DR                  AA * ( AA + 1.0 ) * XX * XX
+ A  DX                  2.0 * AA * ( AA + 1.0 ) * RR * XX
+ A  DAA                 2.0 * RR * XX * XX
+ A  DAR                 ( 2.0 *  AA + 1.0 ) * XX * XX
+ A  DAX                 2.0 * ( 2.0 *  AA + 1.0 ) * RR * XX
+ A  DRX                 2.0 * AA * ( AA + 1.0 ) * XX
+ A  DXX                 2.0 * AA * ( AA + 1.0 ) * RR
+ F                      D * B
+ G  AA                  DA * B + D * BA
+ G  RR                  DR * B
+ G  XX                  DX * B + D * BX
+ H  AA        AA        DAA * B + 2.0 * DA * BA + D * BAA
+ H  AA        RR        DAR * B + DR * BA
+ H  AA        XX        DAX * B + DA * BX + DX * BA + D * BAX
+ H  RR        XX        DRX * B + DR * BX
+ H  XX        XX        DXX * B + 2.0 * DX * BX + D * BXX
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        PFIT1LS
+
+INDIVIDUALS
+
+ T  L2
+ F                      GVAR * GVAR
+ G                      GVAR + GVAR
+ H                      2.0
+
+ENDATA

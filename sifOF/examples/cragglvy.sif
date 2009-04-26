@@ -1,0 +1,228 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          CRAGGLVY
+
+*   Problem :
+*   *********
+*   Extended Cragg and Levy problem.
+*   This problem is a sum of m  sets of 5 groups,
+*   There are 2m+2 variables. The Hessian matrix is 7-diagonal.
+
+*   Source:  problem 32 in
+*   Ph. L. Toint,
+*   "Test problems for partially separable optimization and results
+*   for the routine PSPMIN",
+*   Report 83/4, Department of Mathematics, FUNDP (Namur, B), 1983.
+
+*   See  also Buckley#18
+*   SIF input: Ph. Toint, Dec 1989.
+
+*   classification OUR2-AY-V-0
+
+*   M is the number of group sets
+
+*IE M                   1              $-PARAMETER n = 4     original value
+ IE M                   4              $-PARAMETER n = 10
+*IE M                   24             $-PARAMETER n = 50
+*IE M                   49             $-PARAMETER n = 100
+*IE M                   249            $-PARAMETER n = 500
+*IE M                   499            $-PARAMETER n = 1000
+*IE M                   2499           $-PARAMETER n = 5000
+
+*   N is the number of variables
+
+ IM 2M        M         2
+ IA N         2M        2
+
+*   Define useful parameters
+
+ IE 1                   1
+
+
+VARIABLES
+
+ DO I         1                        N
+ X  X(I)
+ ND
+
+GROUPS
+
+ DO I         1                        M
+
+ IM 2I        I         2
+ IA 2I-1      2I        -1
+ IA 2I+1      2I        1
+ IA 2I+2      2I        2
+
+ XN A(I)      X(2I)     -1.0
+
+ XN B(I)      'SCALE'   0.01
+ XN B(I)      X(2I)     1.0            X(2I+1)   -1.0
+
+ XN C(I)      X(2I+1)   1.0            X(2I+2)   -1.0
+ XN D(I)      X(2I-1)   1.0
+ XN F(I)      X(2I+2)   1.0
+
+ ND
+
+CONSTANTS
+
+ DO I         1                        M
+ X  CRAGGLVY  F(I)      1.0
+ ND
+
+BOUNDS
+
+ FR CRAGGLVY  'DEFAULT'
+
+START POINT
+
+ XV CRAGGLVY  'DEFAULT' 2.0
+ X  CRAGGLVY  X(1)      1.0
+
+ELEMENT TYPE
+
+ EV EXPN      V
+
+ EV TANG      V1                       V2
+ IV TANG      U
+
+ELEMENT USES
+
+ DO I         1                        M
+
+ IM 2I        I         2
+ IA 2I-1      2I        -1
+ IA 2I+1      2I        1
+ IA 2I+2      2I        2
+
+ XT AE(I)     EXPN
+ ZV AE(I)     V                        X(2I-1)
+
+ XT CE(I)     TANG
+ ZV CE(I)     V1                       X(2I+1)
+ ZV CE(I)     V2                       X(2I+2)
+
+ ND
+
+GROUP TYPE
+
+ GV L2        GVAR
+ GV L4        GVAR
+ GV L6        GVAR
+ GV L8        GVAR
+
+GROUP USES
+
+ DO I         1                        M
+
+ XT A(I)      L4
+ XE A(I)      AE(I)
+
+ XT B(I)      L6
+
+ XT C(I)      L4
+ XE C(I)      CE(I)
+
+ XT D(I)      L8
+
+ XT F(I)      L2
+
+ ND
+
+OBJECT BOUND
+
+ LO CRAGGLVY            0.0
+
+*   Solution
+
+*LO SOLTN(2)            0.0
+*LO SOLTN(4)            1.886566
+*LO SOLTN(24)           1.5372D+01
+*LO SOLTN(29)           3.2270D+01
+*LO SOLTN(249)          1.6745D+02
+*LO SOLTN(499)          3.3642D+02
+*LO SOLTN(2499)         1.6882D+03
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      CRAGGLVY
+
+TEMPORARIES
+
+ R  FVAL
+ R  SECU
+ R  SECUSQ
+ R  TANU
+ M  EXP
+ M  TAN
+ M  COS
+
+INDIVIDUALS
+
+*   Exponential
+
+ T  EXPN
+ A  FVAL                EXP( V )
+ F                      FVAL
+ G  V                   FVAL
+ H  V         V         FVAL
+
+*   Tangent
+
+ T  TANG
+ R  U         V1        1.0            V2        -1.0
+ A  TANU                TAN( U )
+ A  SECU                1.0 / COS( U )
+ A  SECUSQ              SECU * SECU
+ F                      TANU
+ G  U                   SECUSQ
+ H  U         U         2.0 * SECUSQ * TANU
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        CRAGGLVY
+
+INDIVIDUALS
+
+*   Least-square groups
+
+ T  L2
+ F                      GVAR * GVAR
+ G                      GVAR + GVAR
+ H                      2.0
+
+*   Least fourth power
+
+ T  L4
+ F                      GVAR**4
+ G                      4.0 * GVAR**3
+ H                      12.0 * GVAR**2
+
+*  Least sixth power groups
+
+ T  L6
+ F                      GVAR**6
+ G                      6.0 * GVAR**5
+ H                      30.0 * GVAR**4
+
+*  Least eighth power
+
+ T  L8
+ F                      GVAR**8
+ G                      8.0 * GVAR**7
+ H                      56.0 * GVAR**6
+
+ENDATA

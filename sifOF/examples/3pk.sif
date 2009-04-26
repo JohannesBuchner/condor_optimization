@@ -1,0 +1,671 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          3PK
+
+*   Problem :
+*   *********
+
+*   A problem arising in the estimation of structured O/D matrix
+
+*   Source:  
+*   M. Bierlaire, private communication
+*   see also
+*   M. Bierlaire and Ph. L. Toint,
+*   MEUSE: an origin-destination estimator that exploits structure,
+*   Transportation Research B, 29, 1, 47--60, 1995.
+
+*   SIF input: Ph. Toint, Dec 1989, Corrected July 1993.
+
+*   classification SUR2-MN-30-0
+
+* Parameters
+
+* Number of parking columns
+
+ IE NPKC                3
+ IA NPKC-1    NPKC      -1
+ IA NPKC+1    NPKC      1
+
+* Number of centroids
+
+ IE NCENT               6
+ IA NCENT-1   NCENT     -1
+ RI RNCENT-1  NCENT-1
+
+* Gamma : general trust in the countings
+
+ RE GAMMA               1.0000e+04  
+
+* Objective for fill-up coefficients
+
+ RE FT0                 0.500000    
+ RE FT1                 0.500000    
+ RE FT2                 0.500000    
+
+* Inverse of the weights for fill-up coefficients
+
+ RE WFT0                1.000000    
+ RE WFT1                1.000000    
+ RE WFT2                1.000000    
+
+* Number of available countings
+
+ IE COUNT               9           
+ IA COUNT-1   COUNT     -1
+
+* Inverse of the weight on unknow cells
+
+ RE DEFW                999.999953  
+
+* Trip ends 
+
+* Some interesting values...
+
+ IE 0                   0
+ IE 1                   1
+
+* Countings
+
+ RE COU0                910.000000  
+ RE COU1                175.000000  
+ RE COU2                1915.000000 
+ RE COU3                450.000000  
+ RE COU4                260.000000  
+ RE COU5                80.000000   
+ RE COU6                670.000000  
+ RE COU7                1450.000000 
+ RE COU8                990.000000  
+
+* Inverse of the trusts in countings
+
+ RE PHI0                1.000000    
+ RE PHI1                1.000000    
+ RE PHI2                1.000000    
+ RE PHI3                1.000000    
+ RE PHI4                1.000000    
+ RE PHI5                1.000000    
+ RE PHI6                1.000000    
+ RE PHI7                1.000000    
+ RE PHI8                1.000000    
+
+ DO I         0                        COUNT-1
+ A/ PHI(I)    PHI(I)                   GAMMA
+ OD I
+
+VARIABLES
+
+* Coefficients pour les parkings
+
+ X  A1,0      
+ X  A2,0      
+ X  A3,0      
+ X  A4,0      
+ X  A5,0      
+ X  A0,1      
+ X  A2,1      
+ X  A3,1      
+ X  A4,1      
+ X  A5,1      
+ X  A0,2      
+ X  A1,2      
+ X  A3,2      
+ X  A4,2      
+ X  A5,2      
+
+* O/D matrix
+
+ DO J         NPKC                     NCENT-1
+ IA J+1       J         1
+ IA J-1       J         -1
+ DO I         0                        J-1
+ X  T(I,J)
+ OD I
+ DO I         J+1                      NCENT-1
+ X  T(I,J)
+ OD I
+ OD J
+
+GROUPS
+
+* A priori information, but not parkings
+
+ XN G0,3      T0,3      0.010000    
+ XN G0,3      'SCALE'   1.0
+
+ XN G1,3      T1,3      0.007143    
+ XN G1,3      'SCALE'   1.0
+
+ XN G2,3      T2,3      0.008333    
+ XN G2,3      'SCALE'   1.0
+
+ XN G4,3      T4,3      0.050000    
+ XN G4,3      'SCALE'   1.0
+
+ XN G5,3      T5,3      0.050000    
+ XN G5,3      'SCALE'   1.0
+
+ XN G0,4      T0,4      0.005000    
+ XN G0,4      'SCALE'   1.0
+
+ XN G1,4      T1,4      0.005556    
+ XN G1,4      'SCALE'   1.0
+
+ XN G2,4      T2,4      0.050000    
+ XN G2,4      'SCALE'   1.0
+
+ XN G3,4      T3,4      0.001667    
+ XN G3,4      'SCALE'   1.0
+
+ XN G5,4      T5,4      0.025000    
+ XN G5,4      'SCALE'   1.0
+
+ XN G0,5      T0,5      0.020000    
+ XN G0,5      'SCALE'   1.0
+
+ XN G1,5      T1,5      0.033333    
+ XN G1,5      'SCALE'   1.0
+
+ XN G2,5      T2,5      0.014286    
+ XN G2,5      'SCALE'   1.0
+
+ XN G3,5      T3,5      0.006667    
+ XN G3,5      'SCALE'   1.0
+
+ XN G4,5      T4,5      0.050000    
+ XN G4,5      'SCALE'   1.0
+
+* Parking coefficients
+
+ AM TMP       FT0       5.000000    
+ RD TMP1      TMP       1.0
+ ZN H0        'SCALE'                  WFT0      
+ ZN H0        A1,0                     TMP1
+ ZN H0        A2,0                     TMP1
+ ZN H0        A3,0                     TMP1
+ ZN H0        A4,0                     TMP1
+ ZN H0        A5,0                     TMP1
+ AM TMP       FT1       5.000000    
+ RD TMP1      TMP       1.0
+ ZN H1        'SCALE'                  WFT1      
+ ZN H1        A0,1                     TMP1
+ ZN H1        A2,1                     TMP1
+ ZN H1        A3,1                     TMP1
+ ZN H1        A4,1                     TMP1
+ ZN H1        A5,1                     TMP1
+ AM TMP       FT2       5.000000    
+ RD TMP1      TMP       1.0
+ ZN H2        'SCALE'                  WFT2      
+ ZN H2        A0,2                     TMP1
+ ZN H2        A1,2                     TMP1
+ ZN H2        A3,2                     TMP1
+ ZN H2        A4,2                     TMP1
+ ZN H2        A5,2                     TMP1
+
+* Unknown parking entries
+
+* Countings
+
+ DO I         0                        COUNT-1
+ ZN K(I)      'SCALE'                  PHI(I)
+ OD I
+
+
+* Parking columns
+
+* 1,0
+
+ RD TMP1      COU7      200.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K7        A1,0                     TMP
+ RD TMP1      COU4      200.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K4        A1,0                     TMP
+ RD TMP1      COU2      200.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K2        A1,0                     TMP
+
+* 2,0
+
+ RD TMP1      COU8      480.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K8        A2,0                     TMP
+ RD TMP1      COU7      480.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K7        A2,0                     TMP
+ RD TMP1      COU6      480.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K6        A2,0                     TMP
+ RD TMP1      COU2      480.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K2        A2,0                     TMP
+
+* 3,0
+
+ RD TMP1      COU2      120.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K2        A3,0                     TMP
+
+* 4,0
+
+ RD TMP1      COU7      360.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K7        A4,0                     TMP
+ RD TMP1      COU2      360.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K2        A4,0                     TMP
+
+* 5,0
+
+ RD TMP1      COU8      560.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K8        A5,0                     TMP
+ RD TMP1      COU7      560.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K7        A5,0                     TMP
+ RD TMP1      COU2      560.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K2        A5,0                     TMP
+
+* 0,1
+
+ RD TMP1      COU0      240.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K0        A0,1                     TMP
+
+* 2,1
+
+ RD TMP1      COU8      400.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K8        A2,1                     TMP
+ RD TMP1      COU7      400.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K7        A2,1                     TMP
+ RD TMP1      COU6      400.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K6        A2,1                     TMP
+ RD TMP1      COU2      400.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K2        A2,1                     TMP
+ RD TMP1      COU0      400.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K0        A2,1                     TMP
+
+* 3,1
+
+ RD TMP1      COU2      420.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K2        A3,1                     TMP
+ RD TMP1      COU0      420.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K0        A3,1                     TMP
+
+* 4,1
+
+ RD TMP1      COU7      180.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K7        A4,1                     TMP
+ RD TMP1      COU2      180.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K2        A4,1                     TMP
+ RD TMP1      COU0      180.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K0        A4,1                     TMP
+
+* 5,1
+
+ RD TMP1      COU8      320.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K8        A5,1                     TMP
+ RD TMP1      COU7      320.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K7        A5,1                     TMP
+ RD TMP1      COU2      320.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K2        A5,1                     TMP
+ RD TMP1      COU0      320.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K0        A5,1                     TMP
+
+* 0,2
+
+ RD TMP1      COU1      20.000000   
+ RM TMP       TMP1      1.000000    
+ ZN K1        A0,2                     TMP
+ RD TMP1      COU0      20.000000   
+ RM TMP       TMP1      1.000000    
+ ZN K0        A0,2                     TMP
+
+* 1,2
+
+ RD TMP1      COU1      60.000000   
+ RM TMP       TMP1      1.000000    
+ ZN K1        A1,2                     TMP
+
+* 3,2
+
+ RD TMP1      COU2      40.000000   
+ RM TMP       TMP1      1.000000    
+ ZN K2        A3,2                     TMP
+ RD TMP1      COU1      40.000000   
+ RM TMP       TMP1      1.000000    
+ ZN K1        A3,2                     TMP
+ RD TMP1      COU0      40.000000   
+ RM TMP       TMP1      1.000000    
+ ZN K0        A3,2                     TMP
+
+* 4,2
+
+ RD TMP1      COU5      120.000000  
+ RM TMP       TMP1      1.000000    
+ ZN K5        A4,2                     TMP
+
+* 5,2
+
+ RD TMP1      COU8      20.000000   
+ RM TMP       TMP1      1.000000    
+ ZN K8        A5,2                     TMP
+ RD TMP1      COU5      20.000000   
+ RM TMP       TMP1      1.000000    
+ ZN K5        A5,2                     TMP
+
+
+* Other columns
+
+* 0,3
+
+ AD TMP       COU7      1.000000    
+ ZN K7        T0,3                     TMP
+
+ AD TMP       COU3      1.000000    
+ ZN K3        T0,3                     TMP
+
+* 1,3
+
+ AD TMP       COU7      1.000000    
+ ZN K7        T1,3                     TMP
+
+ AD TMP       COU4      1.000000    
+ ZN K4        T1,3                     TMP
+
+* 2,3
+
+ AD TMP       COU8      1.000000    
+ ZN K8        T2,3                     TMP
+
+ AD TMP       COU7      1.000000    
+ ZN K7        T2,3                     TMP
+
+ AD TMP       COU6      1.000000    
+ ZN K6        T2,3                     TMP
+
+* 4,3
+
+ AD TMP       COU7      1.000000    
+ ZN K7        T4,3                     TMP
+
+* 5,3
+
+ AD TMP       COU8      1.000000    
+ ZN K8        T5,3                     TMP
+
+ AD TMP       COU7      1.000000    
+ ZN K7        T5,3                     TMP
+
+* 0,4
+
+ AD TMP       COU3      1.000000    
+ ZN K3        T0,4                     TMP
+
+* 1,4
+
+ AD TMP       COU4      1.000000    
+ ZN K4        T1,4                     TMP
+
+* 2,4
+
+ AD TMP       COU8      1.000000    
+ ZN K8        T2,4                     TMP
+
+ AD TMP       COU6      1.000000    
+ ZN K6        T2,4                     TMP
+
+* 3,4
+
+ AD TMP       COU3      1.000000    
+ ZN K3        T3,4                     TMP
+
+ AD TMP       COU2      1.000000    
+ ZN K2        T3,4                     TMP
+
+* 5,4
+
+ AD TMP       COU8      1.000000    
+ ZN K8        T5,4                     TMP
+
+* 0,5
+
+ AD TMP       COU6      1.000000    
+ ZN K6        T0,5                     TMP
+
+ AD TMP       COU1      1.000000    
+ ZN K1        T0,5                     TMP
+
+ AD TMP       COU0      1.000000    
+ ZN K0        T0,5                     TMP
+
+* 1,5
+
+ AD TMP       COU6      1.000000    
+ ZN K6        T1,5                     TMP
+
+ AD TMP       COU1      1.000000    
+ ZN K1        T1,5                     TMP
+
+* 2,5
+
+ AD TMP       COU6      1.000000    
+ ZN K6        T2,5                     TMP
+
+* 3,5
+
+ AD TMP       COU6      1.000000    
+ ZN K6        T3,5                     TMP
+
+ AD TMP       COU2      1.000000    
+ ZN K2        T3,5                     TMP
+
+ AD TMP       COU1      1.000000    
+ ZN K1        T3,5                     TMP
+
+ AD TMP       COU0      1.000000    
+ ZN K0        T3,5                     TMP
+
+* 4,5
+
+ AD TMP       COU6      1.000000    
+ ZN K6        T4,5                     TMP
+
+ AD TMP       COU5      1.000000    
+ ZN K5        T4,5                     TMP
+
+* Variance minimization
+
+ XN L1,0      A1,0      -0.800000   
+ XN L1,0      'SCALE'   0.500000    
+ XN L1,0      A2,0      0.200000    
+ XN L1,0      A3,0      0.200000    
+ XN L1,0      A4,0      0.200000    
+ XN L1,0      A5,0      0.200000    
+ XN L2,0      A1,0      0.200000    
+ XN L2,0      A2,0      -0.800000   
+ XN L2,0      'SCALE'   0.500000    
+ XN L2,0      A3,0      0.200000    
+ XN L2,0      A4,0      0.200000    
+ XN L2,0      A5,0      0.200000    
+ XN L3,0      A1,0      0.200000    
+ XN L3,0      A2,0      0.200000    
+ XN L3,0      A3,0      -0.800000   
+ XN L3,0      'SCALE'   0.500000    
+ XN L3,0      A4,0      0.200000    
+ XN L3,0      A5,0      0.200000    
+ XN L4,0      A1,0      0.200000    
+ XN L4,0      A2,0      0.200000    
+ XN L4,0      A3,0      0.200000    
+ XN L4,0      A4,0      -0.800000   
+ XN L4,0      'SCALE'   0.500000    
+ XN L4,0      A5,0      0.200000    
+ XN L5,0      A1,0      0.200000    
+ XN L5,0      A2,0      0.200000    
+ XN L5,0      A3,0      0.200000    
+ XN L5,0      A4,0      0.200000    
+ XN L5,0      A5,0      -0.800000   
+ XN L5,0      'SCALE'   0.500000    
+ XN L0,1      A0,1      -0.800000   
+ XN L0,1      'SCALE'   0.500000    
+ XN L0,1      A2,1      0.200000    
+ XN L0,1      A3,1      0.200000    
+ XN L0,1      A4,1      0.200000    
+ XN L0,1      A5,1      0.200000    
+ XN L2,1      A0,1      0.200000    
+ XN L2,1      A2,1      -0.800000   
+ XN L2,1      'SCALE'   0.500000    
+ XN L2,1      A3,1      0.200000    
+ XN L2,1      A4,1      0.200000    
+ XN L2,1      A5,1      0.200000    
+ XN L3,1      A0,1      0.200000    
+ XN L3,1      A2,1      0.200000    
+ XN L3,1      A3,1      -0.800000   
+ XN L3,1      'SCALE'   0.500000    
+ XN L3,1      A4,1      0.200000    
+ XN L3,1      A5,1      0.200000    
+ XN L4,1      A0,1      0.200000    
+ XN L4,1      A2,1      0.200000    
+ XN L4,1      A3,1      0.200000    
+ XN L4,1      A4,1      -0.800000   
+ XN L4,1      'SCALE'   0.500000    
+ XN L4,1      A5,1      0.200000    
+ XN L5,1      A0,1      0.200000    
+ XN L5,1      A2,1      0.200000    
+ XN L5,1      A3,1      0.200000    
+ XN L5,1      A4,1      0.200000    
+ XN L5,1      A5,1      -0.800000   
+ XN L5,1      'SCALE'   0.500000    
+ XN L0,2      A0,2      -0.800000   
+ XN L0,2      'SCALE'   0.500000    
+ XN L0,2      A1,2      0.200000    
+ XN L0,2      A3,2      0.200000    
+ XN L0,2      A4,2      0.200000    
+ XN L0,2      A5,2      0.200000    
+ XN L1,2      A0,2      0.200000    
+ XN L1,2      A1,2      -0.800000   
+ XN L1,2      'SCALE'   0.500000    
+ XN L1,2      A3,2      0.200000    
+ XN L1,2      A4,2      0.200000    
+ XN L1,2      A5,2      0.200000    
+ XN L3,2      A0,2      0.200000    
+ XN L3,2      A1,2      0.200000    
+ XN L3,2      A3,2      -0.800000   
+ XN L3,2      'SCALE'   0.500000    
+ XN L3,2      A4,2      0.200000    
+ XN L3,2      A5,2      0.200000    
+ XN L4,2      A0,2      0.200000    
+ XN L4,2      A1,2      0.200000    
+ XN L4,2      A3,2      0.200000    
+ XN L4,2      A4,2      -0.800000   
+ XN L4,2      'SCALE'   0.500000    
+ XN L4,2      A5,2      0.200000    
+ XN L5,2      A0,2      0.200000    
+ XN L5,2      A1,2      0.200000    
+ XN L5,2      A3,2      0.200000    
+ XN L5,2      A4,2      0.200000    
+ XN L5,2      A5,2      -0.800000   
+ XN L5,2      'SCALE'   0.500000    
+    
+CONSTANTS
+
+* A priori information, but not parkings
+
+ DO J         NPKC                     NCENT-1
+ IA J+1       J         1
+ IA J-1       J         -1
+ DO I         0                        J-1
+ XN 3PK       G(I,J)    1.0
+ OD I
+ DO I         J+1                      NCENT-1
+ XN 3PK       G(I,J)    1.0
+ OD I
+ OD J
+
+* Parking coefficients
+
+ DO J         0                        NPKC-1
+ XN 3PK       H(J)      1.0
+ OD J
+
+* Countings
+
+ DO J         0                        COUNT-1
+ XN 3PK       K(J)      1.0
+ OD J
+ 
+START POINT
+
+ ZV 3PK       A1,0                     FT0       
+ ZV 3PK       A2,0                     FT0       
+ ZV 3PK       A3,0                     FT0       
+ ZV 3PK       A4,0                     FT0       
+ ZV 3PK       A5,0                     FT0       
+ ZV 3PK       A0,1                     FT1       
+ ZV 3PK       A2,1                     FT1       
+ ZV 3PK       A3,1                     FT1       
+ ZV 3PK       A4,1                     FT1       
+ ZV 3PK       A5,1                     FT1       
+ ZV 3PK       A0,2                     FT2       
+ ZV 3PK       A1,2                     FT2       
+ ZV 3PK       A3,2                     FT2       
+ ZV 3PK       A4,2                     FT2       
+ ZV 3PK       A5,2                     FT2       
+
+
+ V  3PK       T0,3      100.000000  
+ V  3PK       T1,3      140.000000  
+ V  3PK       T2,3      120.000000  
+ V  3PK       T4,3      20.000000   
+ V  3PK       T5,3      20.000000   
+ V  3PK       T0,4      200.000000  
+ V  3PK       T1,4      180.000000  
+ V  3PK       T2,4      20.000000   
+ V  3PK       T3,4      600.000000  
+ V  3PK       T5,4      40.000000   
+ V  3PK       T0,5      50.000000   
+ V  3PK       T1,5      30.000000   
+ V  3PK       T2,5      70.000000   
+ V  3PK       T3,5      150.000000  
+ V  3PK       T4,5      20.000000   
+
+GROUP TYPE
+
+ GV SQUARE    X
+
+GROUP USES
+
+    'DEFAULT' SQUARE
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        3PK
+
+INDIVIDUALS
+ T  SQUARE
+ F                      X * X
+ G                      X + X
+ H                      2.0
+ENDATA
+

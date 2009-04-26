@@ -1,0 +1,8 @@
+condor optimQ4_with_noise.xml
+matconvert traceQ4N.dat
+matconvert dbEvalsQ4N.dat
+emacs dbEvalsQ4N.dat.txt &
+emacs traceQ4N.dat.txt &
+emacs resultsQ4N.txt &
+rm condor.out
+rm simulator.out

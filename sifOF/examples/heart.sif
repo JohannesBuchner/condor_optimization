@@ -1,0 +1,458 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          HEART8LS
+
+*   Problem :
+*   *********
+
+*   Dipole model of the heart (6 x 6 version). 
+*   This is the least squares version of problem HEART8.
+
+*   Source:
+*   J. E. Dennis, Jr., D. M. Gay, P. A. Vu,
+*   "A New Nonlinear Equations Test Problem".
+*   Tech. Rep. 83-16, Dept. of Math. Sci., Rice Univ., Houston, TX
+*   June 1983, revised May 1985.
+
+*   SIF input: A.R. Conn, May 1993.
+*              correction by Ph. Shott, January, 1995.
+
+*   classification SUR2-MN-8-0
+
+
+*   some useful parameters.
+
+*RE sum_Mx              0.485
+*RE sum_My              -0.0019
+*RE sum_A               -0.0581
+*RE sum_B               0.015
+*RE sum_C               0.105
+*RE sum_D               0.0406
+*RE sum_E               0.167
+*RE sum_F               -0.399
+
+ RE sum_Mx              -0.69
+ RE sum_My              -0.044
+ RE sum_A               -1.57
+ RE sum_B               -1.31
+ RE sum_C               -2.65
+ RE sum_D               2.0
+ RE sum_E               -12.6
+ RE sum_F               9.48
+
+*RE sum_Mx              -0.816
+*RE sum_My              -0.017
+*RE sum_A               -1.826
+*RE sum_B               -0.754
+*RE sum_C               -4.839
+*RE sum_D               -3.259
+*RE sum_E               -14.023
+*RE sum_F               15.467
+
+
+*RE sum_Mx              -0.809
+*RE sum_My              -0.021
+*RE sum_A               -2.04
+*RE sum_B               -0.614
+*RE sum_C               -6.903
+*RE sum_D               -2.934
+*RE sum_E               -26.328
+*RE sum_F               18.639
+
+*RE sum_Mx              -0.807
+*RE sum_My              -0.021
+*RE sum_A               -2.379
+*RE sum_B               -0.364
+*RE sum_C               -10.541
+*RE sum_D               -1.961
+*RE sum_E               -51.551
+*RE sum_F               21.053
+
+VARIABLES
+
+    a
+    b
+    c
+    d
+    t
+    u
+    v
+    w
+
+GROUPS
+
+ N  G1        a         1.0            b         1.0
+ N  G2        c         1.0            d         1.0
+ N  G3
+ N  G4
+ N  G5
+ N  G6
+ N  G7
+ N  G8
+
+CONSTANTS
+
+ Z  HEART8LS  G1                       sum_Mx
+ Z  HEART8LS  G2                       sum_My
+ Z  HEART8LS  G3                       sum_A
+ Z  HEART8LS  G4                       sum_B
+ Z  HEART8LS  G5                       sum_C
+ Z  HEART8LS  G6                       sum_D
+ Z  HEART8LS  G7                       sum_E
+ Z  HEART8LS  G8                       sum_F
+
+BOUNDS
+
+ FR HEART8LS  'DEFAULT'
+
+START POINT
+
+ XV HEART8LS  'DEFAULT' 1.0
+ XV HEART8LS  a         0.0
+ XV HEART8LS  c         0.0
+
+ELEMENT TYPE
+
+ EV 2PROD     X                        Y
+
+ EV 3PROD     X                        Y
+ EV 3PROD     Z
+
+ EV VPV       X                        Y
+ EP VPV       ALPHA
+
+ EV ADFSQ     X                        Y
+ EV ADFSQ     Z
+
+ EV PDFSQ     X                        Y
+ EV PDFSQ     Z
+ EP PDFSQ     ALPHA
+
+ EV P3PRD     X                        Y
+ EV P3PRD     Z
+ EP P3PRD     ALPHA
+
+ EV 3DPRD     X                        Y
+ EV 3DPRD     Z
+
+ EV D3PRD     X                        Y
+ EV D3PRD     Z
+ EP D3PRD     ALPHA
+
+ELEMENT USES
+
+ T  E1        2PROD
+ V  E1        X                        t
+ V  E1        Y                        a
+
+ T  E2        2PROD
+ V  E2        X                        u
+ V  E2        Y                        b
+
+ T  E3        2PROD
+ V  E3        X                        v
+ V  E3        Y                        c
+
+ T  E4        2PROD
+ V  E4        X                        w
+ V  E4        Y                        d
+
+ T  E5        2PROD
+ V  E5        X                        v
+ V  E5        Y                        a
+
+ T  E6        2PROD
+ V  E6        X                        w
+ V  E6        Y                        b
+
+ T  E7        2PROD
+ V  E7        X                        t
+ V  E7        Y                        c
+
+ T  E8        2PROD
+ V  E8        X                        u
+ V  E8        Y                        d
+
+ T  E9        ADFSQ
+ V  E9        X                        a
+ V  E9        Y                        t
+ V  E9        Z                        v
+
+ T  E10       3PROD
+ V  E10       X                        c
+ V  E10       Y                        t
+ V  E10       Z                        v
+
+ T  E11       ADFSQ
+ V  E11       X                        b
+ V  E11       Y                        u
+ V  E11       Z                        w
+
+ T  E12       3PROD
+ V  E12       X                        d
+ V  E12       Y                        u
+ V  E12       Z                        w
+
+ T  E13       ADFSQ
+ V  E13       X                        c
+ V  E13       Y                        t
+ V  E13       Z                        v
+
+ T  E14       3PROD
+ V  E14       X                        a
+ V  E14       Y                        t
+ V  E14       Z                        v
+
+ T  E15       ADFSQ
+ V  E15       X                        d
+ V  E15       Y                        u
+ V  E15       Z                        w
+
+ T  E16       3PROD
+ V  E16       X                        b
+ V  E16       Y                        u
+ V  E16       Z                        w
+
+
+ T  E17       3DPRD
+ V  E17       X                        a
+ V  E17       Y                        t
+ V  E17       Z                        v
+
+ T  E18       3DPRD
+ V  E18       X                        c
+ V  E18       Y                        v
+ V  E18       Z                        t
+
+ T  E19       3DPRD
+ V  E19       X                        b
+ V  E19       Y                        u
+ V  E19       Z                        w
+
+ T  E20       3DPRD
+ V  E20       X                        d
+ V  E20       Y                        w
+ V  E20       Z                        u
+
+
+ T  E21       3DPRD
+ V  E21       X                        c
+ V  E21       Y                        t
+ V  E21       Z                        v
+
+ T  E22       3DPRD
+ V  E22       X                        a
+ V  E22       Y                        v
+ V  E22       Z                        t
+
+ T  E23       3DPRD
+ V  E23       X                        d
+ V  E23       Y                        u
+ V  E23       Z                        w
+
+ T  E24       3DPRD
+ V  E24       X                        b
+ V  E24       Y                        w
+ V  E24       Z                        u
+
+GROUP TYPE
+
+ GV L2        GVAR
+
+GROUP USES
+
+ T  'DEFAULT' L2
+
+ E  G3        E1                       E2
+ E  G3        E3        -1.0           E4        -1.0
+ E  G4        E5                       E6
+ E  G4        E7                       E8
+ E  G5        E9                       E10       -2.0
+ E  G5        E11                      E12       -2.0
+ E  G6        E13                      E14       2.0
+ E  G6        E15                      E16       2.0
+ E  G7        E17                      E18
+ E  G7        E19                      E20
+ E  G8        E21                      E22       -1.0
+ E  G8        E23                      E24       -1.0
+
+OBJECT BOUND
+
+*   Solution
+
+*LO SOLTN               0.0
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      HEART8LS
+
+TEMPORARIES
+
+ R  ZERO
+ R  TWO
+ R  THREE
+ R  SIX
+ R  DIFF
+ R  DFSQ
+ R  TWOD
+ R  TWOX
+
+
+INDIVIDUALS
+
+*   Element type 2PROD
+
+ T  2PROD
+ A  ZERO                0.0
+ F                      X*Y
+ G  X                   Y
+ G  Y                   X
+ H  X         X         ZERO
+ H  Y         Y         ZERO
+ H  X         Y         1.0
+
+*   Element type 3PROD
+
+ T  3PROD
+ A  ZERO                0.0
+ F                      X*Y*Z
+ G  X                   Y*Z
+ G  Y                   X*Z
+ G  Z                   X*Y
+ H  X         X         ZERO
+ H  Y         Y         ZERO
+ H  Z         Z         ZERO
+ H  X         Y         Z
+ H  X         Z         Y
+ H  Y         Z         X
+
+*   Element type VPV
+
+ T  VPV
+ A  ZERO                0.0
+ A  DIFF                ALPHA - Y
+ F                      X*DIFF
+ G  X                   DIFF
+ G  Y                   -X
+ H  X         X         ZERO
+ H  Y         Y         ZERO
+ H  X         Y         -1.0
+
+*   Element type ADFSQ
+
+ T  ADFSQ
+ A  ZERO                0.0
+ A  TWO                 2.0
+ A  DFSQ                Y**2 - Z**2
+ A  TWOX                TWO*X
+ F                      X*DFSQ
+ G  X                   DFSQ
+ G  Y                   TWOX*Y
+ G  Z                   -TWOX*Z
+ H  X         X         ZERO
+ H  Y         Y         TWOX
+ H  Z         Z         -TWOX
+ H  X         Y         TWO*Y
+ H  X         Z         -TWO*Z
+ H  Y         Z         ZERO
+
+*   Element type PDFSQ
+
+ T  PDFSQ
+ A  ZERO                0.0
+ A  TWO                 2.0
+ A  DIFF                ALPHA - X
+ A  DFSQ                Y**2 - Z**2
+ A  TWOX                TWO*X
+ A  TWOD                TWO*DIFF
+ F                      DIFF*DFSQ
+ G  X                   -DFSQ
+ G  Y                   TWOD*Y
+ G  Z                   -TWOD*Z
+ H  X         X         ZERO
+ H  Y         Y         TWOD
+ H  Z         Z         -TWOD
+ H  X         Y         -TWO*Y
+ H  X         Z         TWO*Z
+ H  Y         Z         ZERO
+
+*   Element type P3PRD
+
+ T  P3PRD
+ A  ZERO                0.0
+ A  TWO                 2.0
+ A  DIFF                ALPHA - X
+ F                      DIFF*Y*Z
+ G  X                   -Y*Z
+ G  Y                   DIFF*Z
+ G  Z                   DIFF*Y
+ H  X         X         ZERO
+ H  Y         Y         ZERO
+ H  Z         Z         ZERO
+ H  X         Y         -Z
+ H  X         Z         -Y
+ H  Y         Z         DIFF
+
+*   Element type 3DPRD
+
+ T  3DPRD
+ A  ZERO                0.0
+ A  TWO                 2.0
+ A  THREE               3.0
+ A  SIX                 6.0
+ A  DIFF                Y**2 - THREE*Z**2
+ F                      X*Y*DIFF
+ G  X                   Y*DIFF
+ G  Y                   X*DIFF + TWO*X*Y**2
+ G  Z                   -SIX*X*Y*Z
+ H  X         X         ZERO
+ H  Y         Y         SIX*X*Y
+ H  Z         Z         -SIX*X*Y
+ H  X         Y         DIFF + TWO*Y**2
+ H  X         Z         -SIX*Y*Z
+ H  Y         Z         -SIX*X*Z
+
+*   Element type D3PRD
+
+ T  D3PRD
+ A  ZERO                0.0
+ A  TWO                 2.0
+ A  THREE               3.0
+ A  SIX                 6.0
+ A  DFSQ                Y**2 - THREE*Z**2
+ A  DIFF                ALPHA - x
+ F                      DIFF*Y*DFSQ
+ G  X                   -Y*DFSQ
+ G  Y                   DIFF*(DFSQ + TWO*Y**2)
+ G  Z                   -SIX*Y*Z*DIFF
+ H  X         X         ZERO
+ H  Y         Y         SIX*Y*DIFF
+ H  Z         Z         -SIX*Y*DIFF
+ H  X         Y         -DFSQ - TWO*Y**2
+ H  X         Z         SIX*Y*Z
+ H  Y         Z         -SIX*DIFF*Z
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        HEART8LS
+
+INDIVIDUALS
+
+ T  L2
+ F                      GVAR * GVAR
+ G                      GVAR + GVAR
+ H                      2.0
+
+ENDATA

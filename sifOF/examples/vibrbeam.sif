@@ -1,0 +1,294 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          VIBRBEAM
+
+*   Problem:
+*   ********
+
+*   A nonlinear least-squares problem arising from laser-Doppler
+*   measurements of a vibrating beam.  The data correspond to a simulated
+*   experiment where two laser-Doppler velocimeters take measurements
+*   at random points along the centreline of the beam.  These measurements
+*   consist of a position (x), an incident angle (p) and the magnitude
+*   of the velocity along the line of sight (v).
+*   The problem is then to fit
+
+*                         2      3                    2     3
+*       v = (c + c x + c x  + c x ) cos[ d + d x + d x + d x  - p ]
+*             0   1     2      3          0   1     2     3
+*           <---- magnitude ----->       <------ phase ----->
+
+*   in the least-squares sense.
+
+*   Source: 
+*   a modification of an exercize for L. Watson course on LANCELOT in
+*   the Spring 1993. Compared to the original proposal, the unnecessary
+*   elements were removed as well as an unnecessary constraint on the phase.
+
+*   SIF input: Ph. L. Toint, May 1993, based on a proposal by
+*              D. E. Montgomery, Virginia Tech., April 1993.
+
+*   classification  SUR2-MN-8-0
+
+ IE 0                   0
+ IE 1                   1
+ IE 3                   3
+ IE m                   30
+
+*   Positions
+
+ RE x1                  39.1722
+ RE x2                  53.9707
+ RE x3                  47.9829
+ RE x4                  12.5925
+ RE x5                  16.5414
+ RE x6                  18.9548
+ RE x7                  27.7168
+ RE x8                  31.9201
+ RE x9                  45.6830
+ RE x10                 22.2524
+ RE x11                 33.9805
+ RE x12                 6.8425
+ RE x13                 35.1677
+ RE x14                 33.5682
+ RE x15                 43.3659
+ RE x16                 13.3835
+ RE x17                 25.7273
+ RE x18                 21.0230
+ RE x19                 10.9755
+ RE x20                 1.5323
+ RE x21                 45.4416
+ RE x22                 14.5431
+ RE x23                 22.4313
+ RE x24                 29.0144
+ RE x25                 25.2675
+ RE x26                 15.5095
+ RE x27                 9.6297
+ RE x28                 8.3009
+ RE x29                 30.8694
+ RE x30                 43.3299
+
+*   Velocity magnitude
+
+ RE v1                  -1.2026
+ RE v2                  1.7053
+ RE v3                  0.5410
+ RE v4                  1.1477
+ RE v5                  1.2447
+ RE v6                  0.9428
+ RE v7                  -0.1360
+ RE v8                  -0.7542
+ RE v9                  -0.3396
+ RE v10                 0.7057
+ RE v11                 -0.8509
+ RE v12                 -0.1201
+ RE v13                 -1.2193
+ RE v14                 -1.0448
+ RE v15                 -0.7723
+ RE v16                 0.4342
+ RE v17                 0.1154
+ RE v18                 0.2868
+ RE v19                 0.3558
+ RE v20                 -0.5090
+ RE v21                 -0.0842
+ RE v22                 0.6021
+ RE v23                 0.1197
+ RE v24                 -0.1827
+ RE v25                 0.1806
+ RE v26                 0.5395
+ RE v27                 0.2072
+ RE v28                 0.1466
+ RE v29                 -0.2672
+ RE v30                 -0.3038
+
+*   Angle of incidence
+
+ RE p1                  2.5736
+ RE p2                  2.7078
+ RE p3                  2.6613
+ RE p4                  2.0374
+ RE p5                  2.1553
+ RE p6                  2.2195
+ RE p7                  2.4077
+ RE p8                  2.4772
+ RE p9                  2.6409
+ RE p10                 2.2981
+ RE p11                 2.5073
+ RE p12                 1.8380
+ RE p13                 2.5236
+ RE p14                 2.5015
+ RE p15                 2.6186
+ RE p16                 0.4947
+ RE p17                 0.6062
+ RE p18                 0.5588
+ RE p19                 0.4772
+ RE p20                 0.4184
+ RE p21                 0.9051
+ RE p22                 0.5035
+ RE p23                 0.5723
+ RE p24                 0.6437
+ RE p25                 0.6013
+ RE p26                 0.5111
+ RE p27                 0.4679
+ RE p28                 0.4590
+ RE p29                 0.6666
+ RE p30                 0.8630
+
+VARIABLES
+
+    c0
+    c1
+    c2
+    c3
+    d0
+    d1
+    d2
+    d3
+
+GROUPS
+
+ DO i         1                        m
+ XN f(i)
+ OD i
+
+CONSTANTS
+
+ DO i         1                        m
+ Z  VIBRBEAM  f(i)                     v(i)
+ OD i
+
+BOUNDS
+
+ XR VIBRBEAM  c0
+ XR VIBRBEAM  c1
+ XR VIBRBEAM  c2
+ XR VIBRBEAM  c3
+ XR VIBRBEAM  d0
+ XR VIBRBEAM  d1
+ XR VIBRBEAM  d2
+ XR VIBRBEAM  d3
+
+START POINT
+
+ XV VIBRBEAM  c0        -3.5
+ XV VIBRBEAM  c1        1.0
+ XV VIBRBEAM  d0        1.7
+
+ELEMENT TYPE
+
+ EV fun       a0                       a1
+ EV fun       a2                       a3
+ EV fun       b
+ EP fun       y                        q
+
+ELEMENT USES
+
+ DO i         1                        m
+ DO j         0                        3
+ XT fu(i,j)   fun
+ ZV fu(i,j)   a0                       d0
+ ZV fu(i,j)   a1                       d1
+ ZV fu(i,j)   a2                       d2
+ ZV fu(i,j)   a3                       d3
+ ZV fu(i,j)   b                        c(j)
+ ZP fu(i,j)   y                        x(i)
+ ZP fu(i,j)   q                        p(i)
+ OD j
+ OD i
+
+GROUP TYPE
+
+ GV square    x
+
+GROUP USES
+
+ DO i         1                        m
+ XT f(i)      square
+ RE y                   1.0
+ DO j         0                        3
+ ZE f(i)      fu(i,j)                  y
+ A* y         y                        x(i) 
+ OD j
+ OD i
+
+OBJECT BOUND
+
+*LO SOLUTION             0.15644607137
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      VIBRBEAM
+
+TEMPORARIES
+
+ R  phi
+ R  cosphi
+ R  sinphi
+ R  y2    
+ R  y3    
+ R  y4    
+ R  y5    
+ R  y6    
+ R  bcos
+ R  bsin
+ M  sin
+ M  cos 
+
+INDIVIDUALS
+
+ T  fun
+ A  y2                  y * y
+ A  y3                  y * y2
+ A  y4                  y2 * y2
+ A  y5                  y2 * y3
+ A  y6                  y3 * y3
+ A  phi                 a0+y*(a1+y*(a2+y*a3))-q
+ A  cosphi              cos( phi )
+ A  sinphi              sin( phi )
+ A  bcos                b * cosphi
+ A  bsin                b * sinphi
+ F                      bcos   
+ G  a0                  - bsin
+ G  a1                  - bsin * y
+ G  a2                  - bsin * y2
+ G  a3                  - bsin * y3
+ G  b                   cosphi
+ H  a0        a0        - bcos   
+ H  a0        a1        - bcos * y
+ H  a0        a2        - bcos * y2
+ H  a0        a3        - bcos * y3
+ H  a0        b         - sinphi
+ H  a1        a1        - bcos * y2
+ H  a1        a2        - bcos * y3
+ H  a1        a3        - bcos * y4
+ H  a1        b         - sinphi * y
+ H  a2        a2        - bcos * y4
+ H  a2        a3        - bcos * y5
+ H  a2        b         - sinphi * y2
+ H  a3        a3        - bcos * y6
+ H  a3        b         - sinphi * y3
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        VIBRBEAM
+
+INDIVIDUALS
+
+ T  square
+ F                      x * x
+ G                      x + x
+ H                      2.0
+
+ENDATA

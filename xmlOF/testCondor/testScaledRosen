@@ -1,0 +1,4 @@
+condor optimScaledRosen.xml
+matconvert traceScaledRosen.dat
+emacs traceScaledRosen.dat.txt &
+emacs resultsScaledRosen.txt &

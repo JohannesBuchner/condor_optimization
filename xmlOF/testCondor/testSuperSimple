@@ -1,0 +1,4 @@
+condor optimSuperSimple.xml
+matconvert traceSuperSimple.dat
+emacs traceSuperSimple.dat.txt &
+emacs resultsSuperSimple.txt &

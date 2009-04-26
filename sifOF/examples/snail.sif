@@ -1,0 +1,191 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          SNAIL
+
+*   Problem :
+*   *********
+
+*   A 2D problem featuring a spiraling valley.
+*   Dedicated to the city of Namur, whose emblem is a snail.
+
+*   Source:
+*   J. Engels, private communication.
+
+*   SIF input: Ph. Toint, May 1990.
+
+*   classification OUR2-AN-2-0
+
+*   Problem parameters (CUP > CLOW > 0)
+
+ RE CLOW                1.0            $ The difference of CLOW and CUP
+ RE CUP                 2.0            $ is the depth of the spiraling valley
+
+VARIABLES
+
+    X1
+    X2
+
+GROUPS
+
+ N  OBJ
+
+BOUNDS
+
+ FR SNAIL     'DEFAULT'
+
+START POINT
+
+    SNAIL     X1        10.0
+    SNAIL     X2        10.0
+
+ELEMENT TYPE
+
+ EV SPIRAL    X                        Y
+ EP SPIRAL    CL                       CU
+
+ELEMENT USES
+
+ T  E         SPIRAL
+ V  E         X                        X1
+ V  E         Y                        X2
+ ZP E         CL                       CLOW
+ ZP E         CU                       CUP
+
+GROUP USES
+
+ E  OBJ       E
+
+OBJECT BOUND
+
+*   Solution
+
+*LO SOLTN               0.0
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      SNAIL
+
+TEMPORARIES
+
+ R  X2
+ R  Y2
+ R  A
+ R  B
+ R  R2
+ R  R
+ R  R3
+ R  R4
+ R  DRDX
+ R  DRDY
+ R  D2RDX2
+ R  D2RDY2
+ R  D2RDXY
+ R  D
+ R  D2
+ R  D3
+ R  THETA
+ R  DTDX
+ R  DTDY
+ R  D2TDX2
+ R  D2TDY2
+ R  D2TDXY
+ R  ARG
+ R  C
+ R  DCDX
+ R  DCDY
+ R  D2CDX2
+ R  D2CDY2
+ R  D2CDXY
+ R  S
+ R  U
+ R  DUDX
+ R  DUDY
+ R  D2UDX2
+ R  D2UDY2
+ R  D2UDXY
+ R  V
+ R  DVDX
+ R  DVDY
+ R  D2VDX2
+ R  D2VDY2
+ R  D2VDXY
+
+ M  SQRT
+ M  COS
+ M  SIN
+ M  ATAN2
+
+INDIVIDUALS
+
+ T  SPIRAL
+ A  A                   0.5 * ( CU + CL )
+ A  B                   0.5 * ( CU - CL )
+ A  X2                  X * X
+ A  Y2                  Y * Y
+ A  R2                  X2 + Y2
+ A  D                   1.0 + R2
+ A  D2                  D * D
+ A  D3                  D2 * D
+ A  U                   R2 / D
+ A  DUDX                ( X + X ) / D2
+ A  DUDY                ( Y + Y ) / D2
+ A  D2UDX2              2.0 * ( D - 4.0 * X2 ) / D3
+ A  D2UDY2              2.0 * ( D - 4.0 * Y2 ) / D3
+ A  D2UDXY              -8.0 * X * Y / D3
+ A  THETA               ATAN2( Y , X )
+ A  DTDX                - Y / R2
+ A  DTDY                X / R2
+ A  R4                  R2 * R2
+ A  D2TDX2              2.0 * X * Y / R4
+ A  D2TDY2              -2.0 * Y * X / R4
+ A  D2TDXY              ( Y2 - X2 ) / R4
+ A  R                   SQRT( R2 )
+ A  R3                  R * R2
+ A  DRDX                X / R
+ A  DRDY                Y / R
+ A  D2RDX2              Y2 / R3
+ A  D2RDY2              X2 / R3
+ A  D2RDXY              - X * Y / R3
+ A  ARG                 R - THETA
+ A  S                   B * SIN( ARG )
+ A  C                   B * COS( ARG )
+ A  DCDX                - S * ( DRDX - DTDX )
+ A  DCDY                - S * ( DRDY - DTDY )
+ A  D2CDX2              - C * ( DRDX - DTDX )**2
+ A+                           - S * ( D2RDX2 - D2TDX2 )
+ A  D2CDY2              - C * ( DRDY - DTDY )**2
+ A+                           - S * ( D2RDY2 - D2TDY2 )
+ A  D2CDXY              - C * ( DRDX - DTDX ) * ( DRDY - DTDY )
+ A+                           - S * ( D2RDXY - D2TDXY )
+ A  V                   1.0 + A * R - R * C
+ A  DVDX                A * DRDX - DRDX * C - R * DCDX
+ A  DVDY                A * DRDY - DRDY * C - R * DCDY
+ A  D2VDX2              A * D2RDX2 - D2RDX2 * C
+ A+                           - 2.0 * DRDX * DCDX
+ A+                           - R * D2CDX2
+ A  D2VDY2              A * D2RDY2 - D2RDY2 * C
+ A+                           - 2.0 * DRDY * DCDY
+ A+                           - R * D2CDY2
+ A  D2VDXY              A * D2RDXY - D2RDXY * C
+ A+                           - DRDX * DCDY
+ A+                           - DRDY * DCDX
+ A+                           - R * D2CDXY
+ F                      U * V
+ G  X                   DUDX * V + U * DVDX
+ G  Y                   DUDY * V + U * DVDY
+ H  X         X         D2UDX2 * V + 2.0 * DUDX * DVDX
+ H+                            + U * D2VDX2
+ H  X         Y         D2UDXY * V + DUDX * DVDY
+ H+                            + DUDY * DVDX
+ H+                            + U * D2VDXY
+ H  Y         Y         D2UDY2 * V + 2.0 * DUDY * DVDY
+ H+                            + U * D2VDY2
+
+ENDATA

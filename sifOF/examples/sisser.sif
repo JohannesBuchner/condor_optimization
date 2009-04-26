@@ -1,0 +1,122 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          SISSER
+
+*   Problem :
+*   *********
+
+*   A simple constrained problem in 2 variables
+
+*   Source:
+*   F.S. Sisser,
+*   "Elimination of bounds in optimization problems by transforming
+*   variables",
+*   Mathematical Programming 20:110-121, 1981.
+
+*   See also Buckley#216 (p. 91)
+
+*   SIF input: Ph. Toint, Dec 1989.
+
+*   classification OUR2-AN-2-0
+
+VARIABLES
+
+    X1
+    X2
+
+GROUPS
+
+ N  G1        'SCALE'   0.3333333
+ N  G2        'SCALE'   -0.5
+ N  G3        'SCALE'   0.3333333
+
+BOUNDS
+
+ FR SISSER    'DEFAULT'
+
+START POINT
+
+    SISSER    X1        1.0
+    SISSER    X2        0.1
+
+ELEMENT TYPE
+
+ EV SQ        X
+ EV 2PR       X                        Y
+
+ELEMENT USES
+
+ T  E1        SQ
+ V  E1        X                        X1
+
+ T  E2        2PR
+ V  E2        X                        X1
+ V  E2        Y                        X2
+
+ T  E3        SQ
+ V  E3        X                        X2
+
+GROUP TYPE
+
+ GV L2        GVAR
+
+GROUP USES
+
+ T  'DEFAULT' L2
+
+ E  G1        E1
+ E  G2        E2
+ E  G3        E3
+
+OBJECT BOUND
+
+*   Least square problems are bounded below by zero
+
+ LO SISSER              0.0
+
+*   Solution
+
+*LO SOLTN               0.0
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      SISSER
+
+INDIVIDUALS
+
+ T  SQ
+ F                      X * X
+ G  X                   X + X
+ H  X         X         2.0
+
+
+ T  2PR
+ F                      X * Y
+ G  X                   Y
+ G  Y                   X
+ H  X         Y         1.0
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        SISSER
+
+INDIVIDUALS
+
+ T  L2
+ F                      GVAR * GVAR
+ G                      GVAR + GVAR
+ H                      2.0
+
+ENDATA

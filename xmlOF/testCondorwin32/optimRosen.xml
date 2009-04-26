@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?> 
+<configCONDOR> 
+    <!--  name of all design variables (tab separated) -->
+    <varNames>
+        x_0 x_1
+    </varNames>
+
+    <objectiveFunction>
+
+        <!-- the aggregation function -->
+        <aggregationFunction>
+
+	      100*(x_1-x_0^2)^2+(1-x_0)^2
+
+        </aggregationFunction> 
+
+    </objectiveFunction>
+
+    <!-- a priori estimated x (starting point) -->
+    <startingPoint>
+    <!--    1      2    -->
+         -1.2   -1.0   
+    </startingPoint>
+      
+    <constraints>
+        <!-- lower bounds for x -->
+        <lowerBounds>
+            <!--  
+              1   2  -->
+            -10 -10 
+        </lowerBounds>
+
+        <!-- upper bounds for x -->
+        <upperBounds>        
+            <!--
+             1  2  -->
+            10 10 
+        </upperBounds>
+
+        <!-- Here would be the matrix for linear inequalities definition if they were needed 
+        <linearInequalities>
+            <eq>
+            </eq>
+        </linearInequalities> -->
+
+        <!-- non-Linear Inequalities
+        <nonLinearInequalities>
+            <eq>
+            </eq>
+        </nonLinearInequalities> -->
+
+        <!-- non-Linear equalities
+        <equalities>
+            <eq>
+            </eq>
+        </equalities> -->
+    </constraints>
+
+    <!-- scaling factor for the normalization of the variables (optional) -->
+    <scalingFactor>
+        1 1
+    </scalingFactor>
+
+    <!-- parameter for optimization:
+             rho_start : initial distance between sample sites (in the rescaled space)
+             rho_end : stopping criteria(in the rescaled space)
+             timeToSleep: when waiting for the result of the evaluation of the objective function, we check every xxx seconds for an appearance of the file containing the results (in second).
+             maxIteration: maximum number of iteration
+    -->
+    <optimizationParameters 
+        rhostart    =" 1    "
+        rhoend      =" 1e-2 "
+        timeToSleep =" .1   "
+        maxIteration=" 1000 "
+    />
+
+    <!-- all the datafile are optional 
+    binaryDatabaseFile: the filename of the full DB data (WARNING!! BINARY FORMAT!) 
+    asciiDatabaseFile: data to add to the full DB data file (in ascii format) 
+    traceFile: the data of the last run are inside a file called (WARNING!! BINARY FORMAT!) -->
+    <dataFiles
+        traceFile="traceRosen.dat"
+    />
+
+    <!-- name of the save file containing the end result of the optimization process -->
+    <resultFile>
+        resultsRosen.txt
+    </resultFile>
+
+    <!-- the sigma vector is used to compute sensibilities of the Obj.Funct. relative to variation of amplitude sigma_i on axis i -->
+    <sigmaVector>
+        1 1
+    </sigmaVector>
+
+</configCONDOR>

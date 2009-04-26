@@ -1,0 +1,91 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          CLIFF
+
+*   Problem :
+*   *********
+
+*   The "cliff problem" in 2 variables
+
+*   Source:  problem 206 (p. 46) in
+*   A.R. Buckley,
+*   "Test functions for unconstrained minimization",
+*   TR 1989CS-3, Mathematics, statistics and computing centre,
+*   Dalhousie University, Halifax (CDN), 1989.
+
+*   SIF input: Ph. Toint, Dec 1989.
+
+*   classification OUR2-AN-2-0
+
+VARIABLES
+
+    X1
+    X2
+
+GROUPS
+
+ N  G1        X1        0.01
+ N  G2        X1        -1.0           X2        1.0
+ N  G3        X1        1.0            X2        -1.0
+
+CONSTANTS
+
+    CLIFF     G1        0.03
+
+BOUNDS
+
+ FR CLIFF     'DEFAULT'
+
+START POINT
+
+    CLIFF     X1        0.0
+    CLIFF     X2        -1.0
+
+GROUP TYPE
+
+ GV L2        GVAR
+ GV 20EXP     GVAR
+
+GROUP USES
+
+ T  G1        L2
+ T  G3        20EXP
+
+OBJECT BOUND
+
+ LO CLIFF               0.0
+
+*   Solution
+
+ LO SOLTN               0.199786613
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        CLIFF
+
+TEMPORARIES
+
+ R  EXPA
+ M  EXP
+
+INDIVIDUALS
+
+ T  L2
+ F                      GVAR * GVAR
+ G                      GVAR + GVAR
+ H                      2.0
+
+ T  20EXP
+ A  EXPA                EXP( 20.0 * GVAR )
+ F                      EXPA
+ G                      20.0 * EXPA
+ H                      400.0 * EXPA
+
+ENDATA

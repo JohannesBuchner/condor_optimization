@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-1"?> 
+<configCONDOR> 
+    <!--  name of all design variables (tab separated) -->
+    <varNames>
+        v0 v1
+    </varNames>
+
+    <objectiveFunction>
+
+        <!-- the aggregation function -->
+        <aggregationFunction>
+
+	      -v0-v1
+
+        </aggregationFunction> 
+
+    </objectiveFunction>
+
+    <!-- a priori estimated x (starting point) -->
+    <startingPoint>
+    <!-- 1   2    -->
+         0   0
+    </startingPoint>
+      
+    <constraints>
+
+        <!-- Here would be the matrix for linear inequalities definition if they were needed 
+        <linearInequalities>
+            <eq>
+            </eq>
+        </linearInequalities> -->
+
+        <!-- non-Linear Inequalities 
+             v is feasible <=> c_i(v) >=0 -->
+        <nonLinearInequalities>
+            <eq>
+		1-v0*v0-v1*v1
+            </eq>
+            <eq>
+		v1-v0*v0
+            </eq>
+        </nonLinearInequalities> 
+
+        <!-- non-Linear equalities
+        <equalities>
+            <eq>
+            </eq>
+        </equalities> -->
+    </constraints>
+
+    <!-- scaling factor for the normalization of the variables (optional) 
+    <scalingFactor>
+        1 1
+    </scalingFactor> -->
+
+    <!-- parameter for optimization:
+             rho_start : initial distance between sample sites (in the rescaled space)
+             rho_end : stopping criteria(in the rescaled space)
+             timeToSleep: when waiting for the result of the evaluation of the objective function, we check every xxx seconds for an appearance of the file containing the results (in second).
+             maxIteration: maximum number of iteration
+    -->
+    <optimizationParameters
+        rhostart    =" .1   "
+        rhoend      =" 1e-6 "
+        timeToSleep =" .1   "
+        maxIteration=" 1000 "
+    />
+
+    <!-- all the datafile are optional 
+    binaryDatabaseFile: the filename of the full DB data (WARNING!! BINARY FORMAT!) 
+    asciiDatabaseFile: data to add to the full DB data file (in ascii format) 
+    traceFile: the data of the last run are inside a file called (WARNING!! BINARY FORMAT!) -->
+    <dataFiles
+        traceFile="traceFletcher.dat"
+    />
+
+    <!-- name of the save file containing the end result of the optimization process -->
+    <resultFile>
+        resultsFletcher.txt
+    </resultFile>
+
+    <!-- the sigma vector is used to compute sensibilities of the Obj.Funct. relative to variation of amplitude sigma_i on axis i -->
+    <sigmaVector>
+        1 1
+    </sigmaVector>
+
+</configCONDOR>

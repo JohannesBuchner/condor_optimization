@@ -1,0 +1,319 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          MANCINO
+
+*   Problem :
+*   *********
+
+*   Mancino's function with variable dimension.
+
+*   Source:
+*   E. Spedicato,
+*   "Computational experience with quasi-Newton algorithms for
+*   minimization problems of moderate size",
+*   Report N-175, CISE, Milano, 1975.
+
+*   See also Buckley #51 (p. 72), Schittkowski #391 (for N = 30)
+
+*   SIF input: Ph. Toint, Dec 1989.
+*              correction by Ph. Shott, January, 1995.
+
+*   classification SUR2-AN-V-0
+
+*   The definitions
+*     s_{i,j} = \sin \log v_{i,j}   and s_{i,j} = \cos \log v_{i,j}
+*   have been used.  It seems that the additional exponent ALPHA
+*   in Buckley is a typo.
+
+*   Number of variables
+
+ IE N                   10             $-PARAMETER
+*IE N                   20             $-PARAMETER
+*IE N                   30             $-PARAMETER Schittkowski #391
+*IE N                   50             $-PARAMETER
+*IE N                   100            $-PARAMETER
+
+*   Problem parameters
+
+ IE ALPHA               5              $-PARAMETER
+ RE BETA                14.0           $-PARAMETER
+ IE GAMMA               3              $-PARAMETER
+
+*   Define A
+
+ RI RALPHA    ALPHA
+ RI RN        N
+ IA N-1       N          -1
+ RI RN-1      N-1
+ R* N-1SQ     RN-1                     RN-1
+ R* BETAN     BETA                     RN
+ R* BETAN2    BETAN                    BETAN
+ RA AL+1      RALPHA     1.0
+ R* A1SQ      AL+1                     AL+1
+ R* F0        A1SQ                     N-1SQ
+ RM F1        F0         -1.0
+ R+ F2        BETAN2                   F1
+ RD F3        F2         1.0
+ R* F4        BETAN                    F3
+ RM A         F4         -1.0
+
+*   Other parameters
+
+ RM -N/2      RN         -0.5
+
+ IE 1                    1
+
+VARIABLES
+
+ DO I         1                        N
+ X  X(I)
+ ND
+
+GROUPS
+
+ DO I         1                        N
+ ZN G(I)      X(I)                     BETAN
+ ND
+
+CONSTANTS
+
+ DO I         1                        N
+ RI RI        I
+ R+ I-N/2     RI                       -N/2
+ RE CI                  1.0
+ DO J         1                        GAMMA
+ R* CI        CI                       I-N/2
+ OD J
+ Z  MANCINO   G(I)                     CI
+ ND
+
+BOUNDS
+
+*   defaults = free variables
+
+ FR MANCINO   'DEFAULT'
+
+START POINT
+
+ DO I         1                        N
+
+ IA I-1       I         -1
+ RI RI        I
+ RE H                   0.0
+
+ DO J         1                        I-1
+
+ RI RJ        J
+ RD 1/J       RJ        1.0
+ R* I/J       RI                       1/J
+ R( SQI/J     SQRT                     I/J
+ R( LIJ       LOG                      SQI/J
+ R( SIJ       SIN                      LIJ
+ R( CIJ       COS                      LIJ
+
+ RE SA                  1.0
+ RE CA                  1.0
+
+ DO K         1                        ALPHA
+ R* SA        SA                       SIJ
+ R* CA        CA                       CIJ
+ OD K
+
+ R+ SCA       SA                       CA
+ R* HIJ       SQI/J                    SCA
+ R+ H         H                        HIJ
+
+ OD J
+
+ IA I+1       I         1
+
+ DO J         I+1                      N
+
+ RI RJ        J
+ RD 1/J       RJ        1.0
+ R* I/J       RI                       1/J
+ R( SQI/J     SQRT                     I/J
+ R( LIJ       LOG                      SQI/J
+ R( SIJ       SIN                      LIJ
+ R( CIJ       COS                      LIJ
+
+ RE SA                  1.0
+ RE CA                  1.0
+
+ DO K         1                        ALPHA
+ RM SA        SA                       SIJ
+ RM CA        CA                       CIJ
+ OD K
+
+ R+ SCA       SA                       CA
+ R* HIJ       SQI/J                    SCA
+ R+ H         H                        HIJ
+
+ OD J
+
+ R+ I-N/2     RI                       -N/2
+
+ RE CI                  1.0
+
+ DO J         1                        GAMMA
+ R* CI        CI                       I-N/2
+ OD J
+
+ R+ TMP       H                        CI
+ R* XI0       TMP                      A
+
+ Z  MANCINO   X(I)                     XI0
+
+ ND
+
+ELEMENT TYPE
+
+ EV MANC      X
+ EP MANC      II                       JJ
+ EP MANC      AL
+
+ELEMENT USES
+
+ DO I         1                        N
+
+ RI RI        I
+ IA I-1       I         -1
+
+ DO J         1                        I-1
+ RI RJ        J
+ XT E(I,J)    MANC
+ ZV E(I,J)    X                        X(J)
+ ZP E(I,J)    II                       RI
+ ZP E(I,J)    JJ                       RJ
+ ZP E(I,J)    AL                       RALPHA
+ OD J
+
+ IA I+1       I         1
+
+ DO J         I+1                      N
+ RI RJ        J
+ XT E(I,J)    MANC
+ ZV E(I,J)    X                        X(J)
+ ZP E(I,J)    II                       RI
+ ZP E(I,J)    JJ                       RJ
+ ZP E(I,J)    AL                       RALPHA
+
+ ND
+
+GROUP TYPE
+
+ GV L2        GVAR
+
+GROUP USES
+
+ DO I         1                        N
+
+ IA I-1       I         -1
+ XT G(I)      L2
+
+ DO J         1                        I-1
+ XE G(I)      E(I,J)
+ OD J
+
+ IA I+1       I         1
+
+ DO J         I+1                      N
+ XE G(I)      E(I,J)
+ ND
+
+OBJECT BOUND
+
+*   Least square problems are bounded below by zero
+
+ LO MANCINO             0.0
+
+*   Solution
+
+*LO SOLTN               0.0
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      MANCINO
+
+TEMPORARIES
+
+ R  INVIJ
+ R  VIJ
+ R  DVIJ
+ R  LIJ
+ R  SIJ
+ R  CIJ
+ R  SUMAL
+ R  DSUMAL
+ R  SAL
+ R  DSAL
+ R  B
+ R  A1
+ R  A2
+ R  A3
+ R  DSDX
+ R  DCDX
+ R  V2
+ R  DBDX
+ R  SCIJ
+ R  DSCIJ
+
+ M  LOG
+ M  SIN
+ M  COS
+ M  SQRT
+
+INDIVIDUALS
+
+ T  MANC
+ A  A1                  AL - 1.0
+ A  A2                  AL - 2.0
+ A  A3                  AL - 3.0
+ A  INVIJ               X * X + II / JJ
+ A  VIJ                 SQRT( INVIJ )
+ A  V2                  VIJ * VIJ
+ A  DVIJ                X / VIJ
+ A  LIJ                 LOG( VIJ )
+ A  SIJ                 SIN( LIJ )
+ A  DSDX                CIJ * DVIJ  / VIJ
+ A  CIJ                 COS( LIJ )
+ A  DCDX                - SIJ * DVIJ / VIJ
+ A  SUMAL               SIJ**AL + CIJ**AL
+ A  DSUMAL              AL * ( DSDX * SIJ**A1 + DCDX * CIJ**A1 )
+ A  SCIJ                SIJ * CIJ
+ A  DSCIJ               SIJ * DCDX + DSDX * CIJ
+ A  SAL                 SIJ**A2 - CIJ**A2
+ A  DSAL                A2 * ( DSDX * SIJ**A3 - DCDX * CIJ**A3 )
+ A  B                   SUMAL + AL * SCIJ * SAL
+ A  DBDX                DSUMAL
+ A+                         + AL * ( DSCIJ * SAL + SCIJ * DSAL )
+ F                      VIJ * SUMAL
+ G  X                   X * B / VIJ
+ H  X         X         ( B + X * DBDX ) / VIJ
+ H+                         - B * X * DVIJ / V2
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        MANCINO
+
+INDIVIDUALS
+
+ T  L2
+
+ F                      GVAR * GVAR
+ G                      GVAR + GVAR
+ H                      2.0
+
+ENDATA

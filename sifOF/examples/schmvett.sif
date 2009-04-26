@@ -1,0 +1,200 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          SCHMVETT
+
+*   Problem :
+*   *********
+
+*   The Schmidt and Vetters problem.
+
+*   This problem has N-2 trivial groups, all of which have 3 nonlinear
+*   elements
+
+*   Source:
+*   J.W. Schmidt and K. Vetters,
+*   "Albeitungsfreie Verfahren fur Nichtlineare Optimierungsproblem",
+*   Numerische Mathematik 15:263-282, 1970.
+
+*   See also Toint#35 and Buckley#14 (p90)
+
+*   SIF input: Ph. Toint, Dec 1989.
+
+*   classification OUR2-AY-V-0
+
+*   Number of variables
+
+ IE N                   3              $-PARAMETER     original value
+*IE N                   10             $-PARAMETER 
+*IE N                   100            $-PARAMETER 
+*IE N                   500            $-PARAMETER
+*IE N                   1000           $-PARAMETER
+*IE N                   5000           $-PARAMETER
+*IE N                   10000          $-PARAMETER
+
+*   Other parameters
+
+ IE 1                   1
+ IA N-2       N         -2
+
+VARIABLES
+
+ DO I         1                        N
+ X  X(I)
+ ND
+
+GROUPS
+
+ DO I         1                        N-2
+ XN G(I)
+ ND
+
+BOUNDS
+
+ FR SCHMVETT  'DEFAULT'
+
+START POINT
+
+ XV SCHMVETT  'DEFAULT' 0.5
+
+ELEMENT TYPE
+
+ EV SCH1      V1                       V2
+ IV SCH1      U
+
+ EV SCH2      V1                       V2
+ IV SCH2      U
+
+ EV SCH3      V1                       V2
+ EV SCH3      V3
+ IV SCH3      U1                       U2
+
+ELEMENT USES
+
+ DO I         1                        N-2
+
+ IA I+1       I         1
+ IA I+2       I         2
+ IA I+3       I         3
+
+ XT A(I)      SCH1
+ ZV A(I)      V1                       X(I)
+ ZV A(I)      V2                       X(I+1)
+
+ XT B(I)      SCH2
+ ZV B(I)      V1                       X(I+1)
+ ZV B(I)      V2                       X(I+2)
+
+ XT C(I)      SCH3
+ ZV C(I)      V1                       X(I)
+ ZV C(I)      V2                       X(I+1)
+ ZV C(I)      V3                       X(I+2)
+
+ ND
+
+GROUP USES
+
+ DO I         1                        N-2
+ XE G(I)      A(I)                     B(I)
+ XE G(I)      C(I)
+ ND
+
+OBJECT BOUND
+
+*   Solution
+
+*LO SOLTN(3)            -3.0
+*LO SOLTN(10)           -24.0
+*LO SOLTN(100)          -294.0
+*LO SOLTN(500)          -1494.0
+*LO SOLTN(1000)         -2994.0
+*LO SOLTN(5000)         ???
+*LO SOLTN(10000)        ???
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      SCHMVETT
+
+TEMPORARIES
+
+ R  T
+ R  T2
+ R  USQ
+ R  HALFU
+ R  SHALFU
+ R  U2SQ
+ R  A
+ R  R
+ R  E
+ R  EXPE
+ R  DEDA
+ R  D2EDA2
+ R  DAD1
+ R  DAD2
+ R  D2AD12
+ R  D2AD22
+ R  DEDASQ
+ R  G
+ M  SIN
+ M  EXP
+ M  COS
+
+INDIVIDUALS
+
+*   Fraction element type
+
+ T  SCH1
+ R  U         V1        1.0            V2        -1.0
+ A  USQ                 U * U
+ A  T                   1.0 + USQ
+ A  T2                  T * T
+ F                      - 1.0 / T
+ G  U                   2.0 * U / T2
+ H  U         U         2.0 * ( 1.0 - 4.0 * USQ / T ) / T2
+
+*   Trigonometric element type
+
+ T  SCH2
+ R  U         V1        3.14159265     V2        1.0
+ A  HALFU               0.5 * U
+ A  SHALFU              SIN( HALFU )
+ F                      - SHALFU
+ G  U                   - 0.5 * COS( HALFU )
+ H  U         U         0.25 * SHALFU
+
+*   Exponential element type
+
+ T  SCH3
+ R  U1        V1        1.0            V3        1.0
+ R  U2        V2        1.0
+ A  U2SQ                U2 * U2
+ A  A                   U1 / U2 - 2.0
+ A  E                   - A * A
+ A  EXPE                EXP( E )
+ A  DEDA                - 2.0 * A
+ A  D2EDA2              -2.0
+ A  DAD1                1.0 / U2
+ A  DAD2                - U1 /  U2SQ
+ A  D2AD12              - 1.0 / U2SQ
+ A  D2AD22              2.0 * U1 / ( U2SQ * U2 )
+ A  DEDASQ              DEDA * DEDA
+ A  G                   EXPE * DEDA
+ F                      - EXPE
+ G  U1                  - G * DAD1
+ G  U2                  - G * DAD2
+ H  U1        U1        - EXPE * ( DEDASQ * DAD1 * DAD1
+ H+                              + D2EDA2 * DAD1 * DAD1 )
+ H  U1        U2        - EXPE * ( DEDASQ * DAD1 * DAD2
+ H+                              + D2EDA2 * DAD1 * DAD2
+ H+                              + DEDA * D2AD12        )
+ H  U2        U2        - EXPE * ( DEDASQ * DAD2 * DAD2
+ H+                              + D2EDA2 * DAD2 * DAD2
+ H+                              + DEDA * D2AD22        )
+
+ENDATA

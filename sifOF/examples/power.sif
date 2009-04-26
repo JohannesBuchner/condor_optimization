@@ -1,0 +1,125 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          POWER
+
+*   Problem :
+*   *********
+
+*   The Power problem by Oren.
+
+*   Source:
+*   S.S. Oren,
+*   Self-scaling variable metric algorithms,
+*   Part II: implementation and experiments"
+*   Management Science 20(5):863-874, 1974.
+
+*   See also Buckley#179 (p. 83)
+
+*   SIF input: Ph. Toint, Dec 1989.
+
+*   classification OUR2-AN-V-0
+
+*   Number of variables
+
+ IE N                   10             $-PARAMETER     original value
+*IE N                   20             $-PARAMETER
+*IE N                   30             $-PARAMETER
+*IE N                   50             $-PARAMETER
+*IE N                   75             $-PARAMETER
+*IE N                   100            $-PARAMETER
+*IE N                   500            $-PARAMETER
+*IE N                   1000           $-PARAMETER
+*IE N                   5000           $-PARAMETER
+*IE N                   10000          $-PARAMETER
+
+*   Other parameters
+
+ IE 1                   1
+
+VARIABLES
+
+ DO I         1                        N
+ X  X(I)
+ ND
+
+GROUPS
+
+ N  G
+
+BOUNDS
+
+ FR POWER     'DEFAULT'
+
+START POINT
+
+ XV POWER     'DEFAULT' 1.0
+
+ELEMENT TYPE
+
+ EV SQ        X
+
+ELEMENT USES
+
+ DO I         1                        N
+ XT E(I)      SQ
+ ZV E(I)      X                        X(I)
+ ND
+
+GROUP TYPE
+
+ GV L2        GVAR
+
+GROUP USES
+
+ T  G         L2
+
+ DO I         1                        N
+ RI RI        I
+ ZE G         E(I)                     RI
+ ND
+
+OBJECT BOUND
+
+*   Least square problems are bounded below by zero
+
+ LO POWER               0.0
+
+*   Solution
+
+*LO SOLTN               0.0
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      POWER
+
+INDIVIDUALS
+
+ T  SQ
+ F                      X * X
+ G  X                   X + X
+ H  X         X         2.0
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        POWER
+
+INDIVIDUALS
+
+ T  L2
+ F                      GVAR * GVAR
+ G                      GVAR + GVAR
+ H                      2.0
+
+ENDATA

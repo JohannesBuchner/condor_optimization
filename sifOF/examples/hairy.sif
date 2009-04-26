@@ -1,0 +1,158 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          HAIRY
+
+*   Problem :
+*   *********
+
+*   A hairy problem in two variables.  The surface defined by
+*   this function has a large number of relatively sharp hills between
+*   which a valley leads to the minimizer.
+*   This problem contains a large number of saddle points.
+
+*   Dedicated to Meret Oppenheim, creator of the "furry cup" (1936).
+
+*   Source:
+*   Ph. Toint, private communication,
+
+*   SIF input: Ph. Toint, Dec 1989.
+
+*   classification OUR2-AY-2-0
+
+ RE HLENGTH             30.0
+ RE CSLOPE              100.0
+
+VARIABLES
+
+    X1
+    X2
+
+GROUPS
+
+ N  FURCUP
+
+BOUNDS
+
+ FR HAIRY     'DEFAULT'
+
+START POINT
+
+    HAIRY     X1        -5.0
+    HAIRY     X2        -7.0
+
+ELEMENT TYPE
+
+ EV FUR       V1                       V2
+ EP FUR       DENS
+
+ EV DCUP      V1                       V2
+ IV DCUP      V
+ EP DCUP      SMOOTH
+
+ EV 1CUP      V
+ EP 1CUP      SMOOTH
+
+ELEMENT USES
+
+ T  HAIR      FUR
+ V  HAIR      V1                       X1
+ V  HAIR      V2                       X2
+ P  HAIR      DENS      7.0
+
+ T  DBOWL     DCUP
+ V  DBOWL     V1                       X1
+ V  DBOWL     V2                       X2
+ P  DBOWL     SMOOTH    0.01
+
+ T  1BOWL     1CUP
+ V  1BOWL     V                        X1
+ P  1BOWL     SMOOTH    0.01
+
+GROUP USES
+
+ ZE FURCUP    HAIR                     HLENGTH
+ ZE FURCUP    DBOWL                    CSLOPE
+ ZE FURCUP    1BOWL                    CSLOPE
+
+OBJECT BOUND
+
+*   Solution
+
+*LO SOLTN               20.0
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      HAIRY
+
+TEMPORARIES
+
+ R  DV1
+ R  DV2
+ R  TDV1
+ R  TDV2
+ R  TDL2
+ R  S1SQ
+ R  C2SQ
+ R  STDV1
+ R  STDV2
+
+ R  VSQ
+ R  ARG
+ R  SQARG
+ R  DEN
+
+ M  SIN
+ M  COS
+
+INDIVIDUALS
+
+*   The fur: a weighted product of sin**2 times cos**2
+
+ T  FUR
+ A  DV1                 DENS * V1
+ A  DV2                 DENS * V2
+ A  TDV1                DV1 + DV1
+ A  TDV2                DV2 + DV2
+ A  TDL2                2.0 * DENS * DENS
+ A  S1SQ                SIN( DV1 )**2
+ A  C2SQ                COS( DV2 )**2
+ A  STDV1               SIN( TDV1 )
+ A  STDV2               SIN( TDV2 )
+ F                      S1SQ * C2SQ
+ G  V1                  DENS * STDV1 * C2SQ
+ G  V2                  -DENS * S1SQ * STDV2
+ H  V1        V1        TDL2 * COS( TDV1) * C2SQ
+ H  V1        V2        -DENS * DENS * STDV1 * STDV2
+ H  V2        V2        -TDL2 * S1SQ * COS( TDV2 )
+
+*   The 2D diagonal cup: a smoothed l2-norm
+
+ T  DCUP
+ R  V         V1        1.0            V2        -1.0
+ A  VSQ                 V * V
+ A  ARG                 SMOOTH + VSQ
+ A  SQARG               SQRT ( ARG )
+ A  DEN                 1.0 / SQARG
+ F                      SQARG
+ G  V                   V * DEN
+ H  V         V         ( 1.0 - VSQ / ARG ) * DEN
+
+*   The 1D cup: a smoothed l2-norm
+
+ T  1CUP
+ A  VSQ                 V * V
+ A  ARG                 SMOOTH + VSQ
+ A  SQARG               SQRT ( ARG )
+ A  DEN                 1.0 / SQARG
+ F                      SQARG
+ G  V                   V * DEN
+ H  V         V         ( 1.0 - VSQ / ARG ) * DEN
+
+ENDATA

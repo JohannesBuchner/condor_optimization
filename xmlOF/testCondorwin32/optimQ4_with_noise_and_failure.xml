@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?> 
+<configCONDOR> 
+    <!--  name of all design variables (tab separated) -->
+    <varNames dimension="4">
+        x1 x2 x3 x4
+    </varNames>
+
+    <objectiveFunction nIndex="5">
+
+         <!--- name of the outputs which are computed by the simulator. If not enough names are given, the same names are used many times with a different prefixed number (tab separated) -->
+        <indexNames>
+             indexA indexB
+        </indexNames>
+
+        <!-- the aggregation function -->
+        <aggregationFunction>
+
+       	      indexA_1+indexB_1+indexA_2+indexB_2+indexA_3
+
+              <!-- if there are several sub-objective, specify them here:
+              <subAggregationFunction name="a">
+              </subAggregationFunction> -->
+
+        </aggregationFunction> 
+
+        <!-- blackbox objective function -->
+        <executableFile>
+             <!-- ;D:\my_projects\L2parallel\burgmann\Debug\burgmann.exe -->
+             OF/testOFF
+        </executableFile>
+
+        <!-- objective function: input file -->
+        <inputObjectiveFile>
+            condorF.out
+        </inputObjectiveFile>
+
+        <!-- objective function: output file -->
+        <outputObjectiveFile>
+            simulatorF.out
+        </outputObjectiveFile>
+
+        <!-- optimization of only a part of the variables -->
+        <variablesToOptimize>
+            <!-- 1  2  3  4   -->
+                 1  1  1  1  
+        </variablesToOptimize>
+    </objectiveFunction>
+
+    <!-- a priori estimated x (starting point) -->
+    <startingPoint>
+    <!--    1      2    3    4  -->
+         -1.2   -1.0   -1    3
+    </startingPoint>
+      
+    <constraints>
+        <!-- lower bounds for x -->
+        <lowerBounds>
+            <!--  
+              1   2   3   4 -->
+            -10 -10 -10 -10
+        </lowerBounds>
+
+        <!-- upper bounds for x -->
+        <upperBounds>        
+            <!--
+             1  2  3  4 -->
+            10 10 10 10
+        </upperBounds>
+
+        <!-- Here would be the matrix for linear inequalities definition if they were needed 
+        <linearInequalities>
+            <eq>
+            </eq>
+        </linearInequalities> -->
+
+        <!-- non-Linear Inequalities
+        <nonLinearInequalities>
+            <eq>
+            </eq>
+        </nonLinearInequalities> -->
+
+        <!-- non-Linear equalities
+        <equalities>
+            <eq>
+            </eq>
+        </equalities> -->
+    </constraints>
+
+    <!-- scaling factor for the normalization of the variables (optional) -->
+    <scalingFactor auto="1" />
+
+    <!-- parameter for optimization:
+             rho_start : initial distance between sample sites (in the rescaled space)
+             rho_end : stopping criteria(in the rescaled space)
+             timeToSleep: when waiting for the result of the evaluation of the objective function, we check every xxx seconds for an appearance of the file containing the results (in second).
+             maxIteration: maximum number of iteration
+    -->
+    <optimizationParameters 
+        rhostart    =".1  "
+        rhoend      ="1e-3"
+        timeToSleep ="1  "
+        maxIteration="1000"
+    />
+
+    <!-- all the datafile are optional 
+    binaryDatabaseFile: the filename of the full DB data (WARNING!! BINARY FORMAT!) 
+    asciiDatabaseFile: data to add to the full DB data file (in ascii format) 
+    traceFile: the data of the last run are inside a file called (WARNING!! BINARY FORMAT!) -->
+    <dataFiles
+        binaryDatabaseFile="dbEvalsQ4NF.dat"
+        asciiDatabaseFile="dbEvalsQ4NF.dat.txt"
+        traceFile="traceQ4NF.dat"
+    />
+
+    <!-- name of the save file containing the end result of the optimization process -->
+    <resultFile>
+        resultsQ4NF.txt
+    </resultFile>
+
+    <!-- the sigma vector is used to compute sensibilities of the Obj.Funct. relative to variation of amplitude sigma_i on axis i -->
+    <sigmaVector>
+        1 1 1 1
+    </sigmaVector>
+
+</configCONDOR>

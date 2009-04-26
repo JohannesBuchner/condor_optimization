@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1"?> 
+<configCONDOR> 
+    <!--  name of all design variables (tab separated) -->
+    <varNames>
+        x0 x1
+    </varNames>
+
+    <objectiveFunction>
+        <aggregationFunction>
+
+	      100*(x1/1000-x0^2)^2+(1-x0)^2
+
+        </aggregationFunction> 
+    </objectiveFunction>
+
+    <!-- a priori estimated x (starting point) -->
+    <startingPoint>
+         -1.2   -1000   
+    </startingPoint>
+      
+    <constraints>
+        <!-- lower bounds for x -->
+        <lowerBounds>
+            -10 -10000
+        </lowerBounds>
+
+        <!-- upper bounds for x -->
+        <upperBounds>        
+            10 10000
+        </upperBounds>
+
+    </constraints>
+
+    <!-- scaling factor for the normalization of the variables (optional) -->
+    <scalingFactor auto="1" /> 
+
+    <optimizationParameters 
+        rhostart    =" .1    "
+        rhoend      =" 1e-5 "
+        maxIteration=" 1000 "
+    />
+
+    <dataFiles
+        traceFile="traceScaledRosen.dat"
+    />
+
+    <!-- name of the save file containing the end result of the optimization process -->
+    <resultFile>
+        resultsScaledRosen.txt
+    </resultFile>
+
+    <!-- the sigma vector is used to compute sensibilities of the Obj.Funct. relative to 
+variation of amplitude sigma_i on axis i -->
+    <sigmaVector>
+        1 1
+    </sigmaVector>
+
+</configCONDOR>

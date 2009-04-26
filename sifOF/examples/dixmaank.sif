@@ -1,0 +1,245 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          DIXMAANK
+
+*   Problem :
+*   *********
+*   The Dixon-Maany test problem (version K)
+
+*   Source:
+*   L.C.W. Dixon and Z. Maany,
+*   "A family of test problems with sparse Hessians for unconstrained
+*   optimization",
+*   TR 206, Numerical Optimization Centre, Hatfield Polytechnic, 1988.
+
+*   See also Buckley#221 (p. 49)
+*   SIF input: Ph. Toint, Dec 1989.
+*              correction by Ph. Shott, January 1995.
+
+*   classification OUR2-AN-V-0
+
+*   M is equal to the third of the number of variables
+
+ IE M                   5              $ n = 15
+*IE M                   30             $ n = 90
+*IE M                   100            $ n = 300
+*IE M                   500            $ n = 1500
+*IE M                   1000           $ n = 3000
+
+*   N is the number of variables
+
+ IM N         M         3
+
+*   Problem parameters
+
+ RE ALPHA               1.0
+ RE BETA                0.125
+ RE GAMMA               0.125
+ RE DELTA               0.125
+
+*   K-set 3
+
+ IE K1                  2
+ IE K2                  0
+ IE K3                  0
+ IE K4                  2
+
+*   Other parameters
+
+ RI RN        N
+ IA N-1       N         -1
+ I+ 2M        M                        M
+
+ IE 1                   1
+
+VARIABLES
+
+ DO I         1                        N
+ X  X(I)
+ ND
+
+GROUPS
+
+ N  GA
+ N  GB
+ N  GC
+ N  GD
+
+CONSTANTS
+
+    DIXMAANK  GA        -1.0
+
+BOUNDS
+
+ FR DIXMAANK  'DEFAULT'
+
+START POINT
+
+ XV DIXMAANK  'DEFAULT' 2.0
+
+ELEMENT TYPE
+
+ EV SQ        X
+ EV SQB       X                        Y
+ EV SQC       X                        Y
+ EV 2PR       X                        Y
+
+ELEMENT USES
+
+*   First group
+
+ DO I         1                        N
+ XT A(I)      SQ
+ ZV A(I)      X                        X(I)
+ ND
+
+*   Second group
+
+ DO I         1                        N-1
+ IA I+1       I          1
+ XT B(I)      SQB
+ ZV B(I)      X                        X(I)
+ ZV B(I)      Y                        X(I+1)
+ ND
+
+*   Third group
+
+ DO I         1                        2M
+ I+ I+M       I                        M
+ XT C(I)      SQC
+ ZV C(I)      X                        X(I)
+ ZV C(I)      Y                        X(I+M)
+ ND
+
+*   Fourth group
+
+ DO I         1                        M
+ I+ I+2M      I                        2M
+ XT D(I)      2PR
+ ZV D(I)      X                        X(I)
+ ZV D(I)      Y                        X(I+2M)
+ ND
+
+GROUP USES
+
+*   First group
+
+ DO I         1                        N
+ RI RI        I
+ R/ I/N       RI                       RN
+ RE TMP                 1.0
+ DO J         1                        K1
+ R* TMP       TMP                      I/N
+ OD J
+ R* AI        TMP                      ALPHA
+ ZE GA        A(I)                     AI
+ ND
+
+*   Second group
+
+ DO I         1                        N-1
+ RI RI        I
+ R/ I/N       RI                       RN
+ RE TMP                 1.0
+ DO J         1                        K2
+ R* TMP       TMP                      I/N
+ OD J
+ R* BI        TMP                      BETA
+ ZE GB        B(I)                     BI
+ ND
+
+*   Third group
+
+ DO I         1                        2M
+ RI RI        I
+ R/ I/N       RI                       RN
+ RE TMP                 1.0
+ DO J         1                        K3
+ R* TMP       TMP                      I/N
+ OD J
+ R* CI        TMP                      GAMMA
+ ZE GC        C(I)                     CI
+ ND
+
+*   Fourth group
+
+ DO I         1                        M
+ RI RI        I
+ R/ I/N       RI                       RN
+ RE TMP                 1.0
+ DO J         1                        K4
+ R* TMP       TMP                      I/N
+ OD J
+ R* DI        TMP                      DELTA
+ ZE GD        D(I)                     DI
+ ND
+
+OBJECT BOUND
+
+ LO DIXMAANK            0.0
+
+*   Solution
+
+*LO SOLTN               1.0
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      DIXMAANK
+
+TEMPORARIES
+
+ R  F1
+ R  F2
+ R  DF2DY
+
+INDIVIDUALS
+
+*   First type
+
+ T  SQ
+ F                      X * X
+ G  X                   X + X
+ H  X         X         2.0
+
+*   Second type
+
+ T  SQB
+ A  F1                  X * X
+ A  F2                  Y + Y * Y
+ A  DF2DY               1.0 + 2.0 * Y
+ F                      F1 * F2 * F2
+ G  X                   2.0 * X * F2 * F2
+ G  Y                   2.0 * F1 * F2 * DF2DY
+ H  X         X         2.0 * F2 * F2
+ H  X         Y         4.0 * X * DF2DY * F2
+ H  Y         Y         4.0 * F1 * F2 +
+ H+                      2.0 * F1 * DF2DY * DF2DY
+
+*   Third type
+
+ T  SQC
+ A  F1                  X * X
+ A  F2                  Y**4
+ F                      F1 * F2
+ G  X                   2.0 * X * F2
+ G  Y                   4.0 * F1 * Y**3
+ H  X         X         2.0 * F2
+ H  X         Y         8.0 * X * Y**3
+ H  Y         Y         12.0 * F1 * Y**2
+
+*   Fourth type
+
+ T  2PR
+ F                      X * Y
+ G  X                   Y
+ G  Y                   X
+ H  X         Y         1.0
+
+ENDATA

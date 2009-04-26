@@ -1,0 +1,4 @@
+condor optimQ4.xml
+matconvert traceQ4.dat
+emacs traceQ4.dat.txt &
+emacs resultsQ4.txt &

@@ -1,0 +1,4 @@
+condor optimFletcher.xml
+matconvert traceFletcher.dat
+emacs traceFletcher.dat.txt &
+emacs resultsFletcher.txt &

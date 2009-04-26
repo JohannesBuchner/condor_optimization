@@ -1,0 +1,238 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          DECONVU
+
+*   Problem :
+*   *********
+
+*   A problem arising in deconvolution analysis 
+*   (unconstrained version).
+
+*   Source:  
+*   J.P. Rasson, Private communication, 1996.
+
+*   SIF input: Ph. Toint, Nov 1996.
+
+*   classification SUR2-MN-61-0
+
+ IE 1                   1
+
+ IE LGSG                11
+ IE LGTR                40
+
+ RE TR1                 0.0000000000
+ RE TR2                 0.0000000000
+ RE TR3                 1.600000E-03
+ RE TR4                 5.400000E-03
+ RE TR5                 7.020000E-02
+ RE TR6                 0.1876000000
+ RE TR7                 0.3320000000
+ RE TR8                 0.7640000000
+ RE TR9                 0.9320000000
+ RE TR10                0.8120000000
+ RE TR11                0.3464000000
+ RE TR12                0.2064000000
+ RE TR13                8.300000E-02
+ RE TR14                3.400000E-02
+ RE TR15                6.179999E-02
+ RE TR16                1.2000000000
+ RE TR17                1.8000000000
+ RE TR18                2.4000000000
+ RE TR19                9.0000000000
+ RE TR20                2.4000000000
+ RE TR21                1.8010000000
+ RE TR22                1.3250000000
+ RE TR23                7.620000E-02
+ RE TR24                0.2104000000
+ RE TR25                0.2680000000
+ RE TR26                0.5520000000
+ RE TR27                0.9960000000
+ RE TR28                0.3600000000
+ RE TR29                0.2400000000
+ RE TR30                0.1510000000
+ RE TR31                2.480000E-02
+ RE TR32                0.2432000000
+ RE TR33                0.3602000000
+ RE TR34                0.4800000000
+ RE TR35                1.8000000000
+ RE TR36                0.4800000000
+ RE TR37                0.3600000000
+ RE TR38                0.2640000000
+ RE TR39                6.000000E-03
+ RE TR40                6.000000E-03
+
+ RE SSG1                1.000000E-02
+ RE SSG2                2.000000E-02
+ RE SSG3                0.4000000000
+ RE SSG4                0.6000000000
+ RE SSG5                0.8000000000
+ RE SSG6                3.0000000000
+ RE SSG7                0.8000000000
+ RE SSG8                0.6000000000
+ RE SSG9                0.4400000000
+ RE SSG10               1.000000E-02
+ RE SSG11               1.000000E-02
+
+ RE CC1                 0.0
+ RE CC2                 0.0
+ RE CC3                 0.0
+ RE CC4                 0.0
+ RE CC5                 0.0
+ RE CC6                 0.0
+ RE CC7                 0.0
+ RE CC8                 0.0
+ RE CC9                 0.0
+ RE CC10                0.0
+ RE CC11                0.0
+ RE CC12                0.0
+ RE CC13                0.0
+ RE CC14                0.0
+ RE CC15                0.0
+ RE CC16                0.0
+ RE CC17                0.0
+ RE CC18                0.0
+ RE CC19                0.0
+ RE CC20                0.0
+ RE CC21                0.0
+ RE CC22                0.0
+ RE CC23                0.0
+ RE CC24                0.0
+ RE CC25                0.0
+ RE CC26                0.0
+ RE CC27                0.0
+ RE CC28                0.0
+ RE CC29                0.0
+ RE CC30                0.0
+ RE CC31                0.0
+ RE CC32                0.0
+ RE CC33                0.0
+ RE CC34                0.0
+ RE CC35                0.0
+ RE CC36                0.0
+ RE CC37                0.0
+ RE CC38                0.0
+ RE CC39                0.0
+ RE CC40                0.0
+
+VARIABLES
+
+ DO K         1                        LGTR
+ X  C(K)
+ OD K
+ DO I         1                        LGSG
+ X  SG(I)
+ OD I
+  
+GROUPS
+
+ DO K         1                        LGTR
+ XN R(K)
+ OD K
+
+CONSTANTS
+
+ DO K         1                        LGTR 
+ Z  DECONVU   R(K)                     TR(K)
+ OD K
+
+BOUNDS
+
+ FR DECONVU   'DEFAULT'
+
+START POINT
+
+ DO K         1                        LGTR  
+ ZV DECONVU   C(K)                     CC(K)
+ OD K
+ DO I         1                        LGSG
+ ZV DECONVU   SG(I)                    SSG(I)
+ OD I 
+
+ELEMENT TYPE
+
+ EV PR        X                        Y
+ EP PR        IDX
+
+ELEMENT USES
+
+ DO K         1                        LGTR 
+ DO I         1                        LGSG
+ I- K-I       K                        I
+ IA K-I+1     K-I       1
+ RI RIDX      K-I+1
+ XT PROD(K,I) PR
+ ZV PROD(K,I) X                        SG(I)
+ ZV PROD(K,I) Y                        C(K-I+1)
+ ZP PROD(K,I) IDX                      RIDX
+ OD I
+ OD K
+
+GROUP TYPE 
+
+ GV SQ        ALPHA
+
+GROUP USES
+
+ DO K         1                        LGTR  
+ XT R(K)      SQ
+ DO I         1                        LGSG  
+ XE R(K)      PROD(K,I)
+ OD I
+ OD K
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      DECONVU
+ 
+TEMPORARIES
+
+ R  SCAL
+ L  NEGIDX
+
+INDIVIDUALS 
+
+ T  PR
+ A  NEGIDX              IDX.LE.0.0
+ I  NEGIDX    SCAL      0.0
+ E  NEGIDX    SCAL      1.0
+ F                      SCAL * X * Y
+ G  X                   SCAL * Y
+ G  Y                   SCAL * X
+ H  X         Y         SCAL
+
+ENDATA                            
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        DECONVU
+
+INDIVIDUALS
+
+ T  SQ
+ F                      ALPHA**2
+ G                      2*ALPHA
+ H                      2
+
+ENDATA
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,105 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          DQDRTIC
+
+*   Problem :
+*   *********
+
+*   A simple diagonal quadratic.
+
+*   Source: problem 22 in
+*   Ph. L. Toint,
+*   "Test problems for partially separable optimization and results
+*   for the routine PSPMIN",
+*   Report 83/4, Department of Mathematics, FUNDP (Namur, B), 1983.
+
+*   SIF input: Ph. Toint, Dec 1989.
+
+*   classification QUR2-AN-V-0
+
+*   N is the number of variables (variable)
+
+ IE N                   10             $-PARAMETER     original value
+*IE N                   50             $-PARAMETER
+*IE N                   100            $-PARAMETER
+*IE N                   500            $-PARAMETER
+*IE N                   1000           $-PARAMETER
+*IE N                   5000           $-PARAMETER
+
+*   Number of groups sets
+
+ IA NGS       N         -2
+
+*   Define useful parameters
+
+ IE 1                   1
+
+VARIABLES
+
+ DO I         1                        N
+ X  X(I)
+ ND
+
+GROUPS
+
+ DO I         1                        NGS
+
+ IA I+1       I         1
+ IA I+2       I         2
+
+ XN A(I)      'SCALE'   0.01
+ XN A(I)      X(I+1)    1.0
+
+ XN B(I)      'SCALE'   0.01
+ XN B(I)      X(I+2)    1.0
+
+ XN C(I)      X(I)      1.0
+
+ ND
+
+BOUNDS
+
+ FR DQDRTIC   'DEFAULT'
+
+START POINT
+
+ XV DQDRTIC   'DEFAULT' 3.0
+
+GROUP TYPE
+
+ GV L2        GVAR
+
+GROUP USES
+
+ XT 'DEFAULT' L2
+
+OBJECT BOUND
+
+ LO DQDRTIC             0.0
+
+*   Solution
+
+*LO SOLTN               0.0
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        DQDRTIC
+
+INDIVIDUALS
+
+*   Least-square groups
+
+ T  L2
+
+ F                      GVAR * GVAR
+ G                      GVAR + GVAR
+ H                      2.0
+
+ENDATA

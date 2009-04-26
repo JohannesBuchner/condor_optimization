@@ -1,0 +1,216 @@
+***************************
+* SET UP THE INITIAL DATA *
+***************************
+
+NAME          GROWTHLS
+
+*   Problem :
+*   *********
+*   GROWTH problem in 3 variables
+
+*   Fit the observed growth g(n) from Gaussian Elimination
+*   with complete pivoting to a function of the form
+*
+*        U1 * n ** ( U2 + LOG(n) * U3 )
+
+*   SIF input: Nick Gould, Nov, 1991, modified by Ph. Toint, March 1994.
+
+*   classification SUR2-AN-3-0
+
+ IE N                   3
+
+VARIABLES
+
+    U1
+    U2
+    U3
+
+GROUPS
+
+ N  G8
+ N  G9
+ N  G10
+ N  G11
+ N  G12
+ N  G13
+ N  G14
+ N  G15
+ N  G16
+ N  G18
+ N  G20
+ N  G25
+
+CONSTANTS
+
+    GROWTHLS  G8        8.0
+    GROWTHLS  G9        8.4305
+    GROWTHLS  G10       9.5294
+    GROWTHLS  G11       10.4627
+    GROWTHLS  G12       12.0  
+    GROWTHLS  G13       13.0205
+    GROWTHLS  G14       14.5949
+    GROWTHLS  G15       16.1078
+    GROWTHLS  G16       18.0596
+    GROWTHLS  G18       20.4569
+    GROWTHLS  G20       24.25
+    GROWTHLS  G25       32.9863
+
+BOUNDS
+
+ FR GROWTHLS  'DEFAULT'
+
+START POINT
+
+ V  GROWTHLS  U1        100.0
+
+ELEMENT TYPE
+
+ EV FIT       U1                       U2
+ EV FIT       U3
+ EP FIT       RN 
+
+ELEMENT USES
+
+ T  'DEFAULT' FIT
+
+ V  G8        U1                       U1
+ V  G8        U2                       U2
+ V  G8        U3                       U3
+ P  G8        RN        8.0
+
+ V  G9        U1                       U1
+ V  G9        U2                       U2
+ V  G9        U3                       U3
+ P  G9        RN        9.0
+
+ V  G10       U1                       U1
+ V  G10       U2                       U2
+ V  G10       U3                       U3
+ P  G10       RN        10.0
+
+ V  G11       U1                       U1
+ V  G11       U2                       U2
+ V  G11       U3                       U3
+ P  G11       RN        11.0
+
+ V  G12       U1                       U1
+ V  G12       U2                       U2
+ V  G12       U3                       U3
+ P  G12       RN        12.0
+
+ V  G13       U1                       U1
+ V  G13       U2                       U2
+ V  G13       U3                       U3
+ P  G13       RN        13.0
+
+ V  G14       U1                       U1
+ V  G14       U2                       U2
+ V  G14       U3                       U3
+ P  G14       RN        14.0
+
+ V  G15       U1                       U1
+ V  G15       U2                       U2
+ V  G15       U3                       U3
+ P  G15       RN        15.0
+
+ V  G16       U1                       U1
+ V  G16       U2                       U2
+ V  G16       U3                       U3
+ P  G16       RN        16.0
+
+ V  G18       U1                       U1
+ V  G18       U2                       U2
+ V  G18       U3                       U3
+ P  G18       RN        18.0
+
+ V  G20       U1                       U1
+ V  G20       U2                       U2
+ V  G20       U3                       U3
+ P  G20       RN        20.0
+
+ V  G25       U1                       U1
+ V  G25       U2                       U2
+ V  G25       U3                       U3
+ P  G25       RN        25.0
+
+GROUP TYPE
+
+ GV L2        GVAR
+
+GROUP USES
+
+ T  'DEFAULT' L2
+
+ E  G8        G8
+ E  G9        G9
+ E  G10       G10
+ E  G11       G11
+ E  G12       G12
+ E  G13       G13
+ E  G14       G14
+ E  G15       G15
+ E  G16       G16
+ E  G18       G18
+ E  G20       G20
+ E  G25       G25
+
+OBJECT BOUND
+
+ LO GROWTH               0.0
+
+*   Solution
+
+*LO SOLTN                0.0
+
+ENDATA
+
+***********************
+* SET UP THE FUNCTION *
+* AND RANGE ROUTINES  *
+***********************
+
+ELEMENTS      GROWTHLS
+
+TEMPORARIES
+
+ R  LOGRN
+ R  POWER
+ M  LOG
+
+INDIVIDUALS
+
+*   Product type elements
+
+ T  FIT
+ A  LOGRN               LOG( RN )
+ A  POWER               RN ** ( U2 + LOGRN * U3 )
+ F                      U1 * POWER
+ G  U1                  POWER
+ G  U2                  U1 * POWER * LOGRN 
+ G  U3                  U1 * POWER * LOGRN ** 2
+ H  U1        U1        0.0
+ H  U1        U2        POWER * LOGRN 
+ H  U1        U3        POWER * LOGRN ** 2
+ H  U2        U2        U1 * POWER * LOGRN ** 2
+ H  U2        U3        U1 * POWER * LOGRN ** 3
+ H  U3        U3        U1 * POWER * LOGRN ** 4
+
+ENDATA
+
+*********************
+* SET UP THE GROUPS *
+* ROUTINE           *
+*********************
+
+GROUPS        GROWTHLS
+
+INDIVIDUALS
+
+*   Least-square groups
+
+ T  L2
+ F                      GVAR * GVAR
+ G                      GVAR + GVAR
+ H                      2.0
+
+ENDATA
