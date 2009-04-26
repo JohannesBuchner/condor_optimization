@@ -4,10 +4,11 @@
 all :  simpleOptimizer \
         sifOptimizer \
         amplOptimizer \
-        xmlStuff 
+        xmlStuff \
+	interactive
 xmlStuff: xmlOptimizer matconvert testFunctions dbtool
 
-OPTIONS= -g -Wall -static
+OPTIONS= -g -Wall
 #OPTIONS= -O3
 
 SIFEXAMPLES = sifOF/examples/3pk.cpp sifOF/examples/akiva.cpp sifOF/examples/allinitu.cpp sifOF/examples/biggs6.cpp \
@@ -91,14 +92,18 @@ simpleOptimizer : $(COMMONCPPFILES) $(COMMONHFILES) \
         $(COMMONCPPFILES) simpleOF/simpleMain.cpp  -lm \
          simpleOF/simpleObjFunctions.cpp 
 
+interactive : $(COMMONCPPFILES) $(COMMONHFILES) \
+       simpleOF/interactive.cpp
+	g++  $(OPTIONS) -o interactive \
+        $(COMMONCPPFILES) simpleOF/interactive.cpp  -lm
 clean:
-	rm xmlOptimizer
-	rm matconvert
-	rm sifOptimizer
-	rm amplOptimizer
-	rm simpleOptimizer
-	rm dbtool
-	rm resultsConstrained.txt
-	rm result.txt
-	rm test.dat
-	rm *~
+	rm -f xmlOptimizer
+	rm -f matconvert
+	rm -f sifOptimizer
+	rm -f amplOptimizer
+	rm -f simpleOptimizer
+	rm -f dbtool
+	rm -f resultsConstrained.txt
+	rm -f result.txt
+	rm -f test.dat
+	rm -f *~

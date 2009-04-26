@@ -219,7 +219,7 @@ void CONDOR( double rhoStart, double rhoEnd, int niter,
                 }
                 if (!of->isFeasible(tmp, &r))
                 {
-                    printf("violation: %e\n",r);
+                    fprintf(stderr, "violation: %e\n",r);
                 }
 
                 // update of delta:

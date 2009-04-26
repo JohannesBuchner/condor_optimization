@@ -64,8 +64,9 @@ Vector ConstrainedL2NormMinimizer(InterPolynomial poly, int k, double delta,
     Vector vG(dim);
     poly.gradientHessian(poly.NewtonPoints[k],vG,mH);
 
-    if (of->isConstrained) 
-	    printf("Limited version! Ignoring constraints !\n");
+    if (of->isConstrained) {
+	    /*fprintf(stderr, "Limited version! Ignoring constraints !\n");*/
+	}
     return L2NormMinimizer(poly, poly.NewtonPoints[k], delta, info, iterMax, lambda1, vG, mH);
 
 //    return ConstrainedL2NormMinimizer(mH,vG,delta,info,iterMax,lambda1,vOBase+poly.NewtonPoints[k],of);
